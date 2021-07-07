@@ -4,7 +4,7 @@ import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 
 import java.util.List;
 
-public interface RestaurantService {
+public interface RestaurantRepository {
     // null if not found, when updated
     Restaurant save(Restaurant restaurant, int userId);
 

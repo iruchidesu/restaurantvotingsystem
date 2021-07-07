@@ -5,9 +5,10 @@ import org.springframework.util.Assert;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
 import ru.iruchidesu.restaurantvotingsystem.repository.UserRepository;
 
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.*;
-
 import java.util.List;
+
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFound;
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class UserService {

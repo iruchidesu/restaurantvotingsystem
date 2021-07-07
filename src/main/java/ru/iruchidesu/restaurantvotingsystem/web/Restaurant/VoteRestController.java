@@ -1,6 +1,5 @@
 package ru.iruchidesu.restaurantvotingsystem.web.Restaurant;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import ru.iruchidesu.restaurantvotingsystem.service.VoteService;
@@ -12,8 +11,11 @@ import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNew;
 
 @Controller
 public class VoteRestController {
-    @Autowired
-    private VoteService service;
+    private final VoteService service;
+
+    public VoteRestController(VoteService service) {
+        this.service = service;
+    }
 
     public Vote create(Vote vote) {
         checkNew(vote);

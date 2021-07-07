@@ -1,6 +1,5 @@
 package ru.iruchidesu.restaurantvotingsystem.web.User;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
 import ru.iruchidesu.restaurantvotingsystem.service.UserService;
@@ -13,8 +12,11 @@ import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNew;
 @Controller
 public class ProfileRestController {
 
-    @Autowired
-    private UserService service;
+    private final UserService service;
+
+    public ProfileRestController(UserService service) {
+        this.service = service;
+    }
 
     public User create(User user) {
         checkNew(user);

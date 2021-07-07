@@ -1,10 +1,14 @@
 package ru.iruchidesu.restaurantvotingsystem.service;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
+import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.repository.MenuRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
@@ -17,11 +21,13 @@ public class MenuService {
         this.repository = repository;
     }
 
+    @CacheEvict(value = "menu", allEntries = true)
     public Menu create(Menu menu, int userId) {
         Assert.notNull(menu, "menu must not be null");
         return repository.save(menu, userId);
     }
 
+    @CacheEvict(value = "menu", allEntries = true)
     public void delete(int id, int userId) {
         checkNotFoundWithId(repository.delete(id, userId), id);
     }
@@ -30,12 +36,21 @@ public class MenuService {
         return checkNotFoundWithId(repository.get(id), id);
     }
 
-    public List<Menu> getAll() {
-        return repository.getAll();
-    }
-
+    @CacheEvict(value = "menu", allEntries = true)
     public void update(Menu menu, int userId) {
         Assert.notNull(menu, "menu must not be null");
-        checkNotFoundWithId(repository.save(menu, userId), menu.id());
+        if (menu.getLocalDate().equals(LocalDate.now())) {
+            checkNotFoundWithId(repository.save(menu, userId), menu.id());
+        }
+
+    }
+
+    @Cacheable(value = "menu", key = "#restaurantId + '_' + T(java.time.LocalDate).now().toString()")
+    public Menu getTodayMenu(int restaurantId) {
+        return checkNotFoundWithId(repository.getTodayMenu(restaurantId), restaurantId);
+    }
+
+    public List<Menu> getHistoryMenu(Restaurant restaurant) {
+        return repository.getMenusByRestaurant(restaurant);
     }
 }

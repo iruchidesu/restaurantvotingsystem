@@ -1,8 +1,8 @@
 package ru.iruchidesu.restaurantvotingsystem.web.Restaurant;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
+import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.service.MenuService;
 
 import java.util.List;
@@ -12,8 +12,12 @@ import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNew;
 
 @Controller
 public class MenuRestController {
-    @Autowired
-    private MenuService service;
+
+    private final MenuService service;
+
+    public MenuRestController(MenuService service) {
+        this.service = service;
+    }
 
     public Menu create(Menu menu) {
         checkNew(menu);
@@ -27,12 +31,12 @@ public class MenuRestController {
         service.update(menu, 100001);
     }
 
-    public Menu get(int id) {
-        return service.get(id);
+    public Menu getTodayMenu(int restaurantId) {
+        return service.getTodayMenu(restaurantId);
     }
 
-    public List<Menu> getAll() {
-        return service.getAll();
+    public List<Menu> getHistoryMenu(Restaurant restaurant) {
+        return service.getHistoryMenu(restaurant);
     }
 
     public void delete(int id) {
