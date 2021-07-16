@@ -1,6 +1,7 @@
 package ru.iruchidesu.restaurantvotingsystem.repository.datajpa;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.iruchidesu.restaurantvotingsystem.model.Role;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
@@ -26,6 +27,7 @@ public class DataJpaVoteRepository implements VoteRepository {
     }
 
     @Override
+    @Transactional
     public boolean delete(int id, int userId) {
         User user = userRepository.getById(userId);
         return user.getRoles().contains(Role.ADMIN) && voteRepository.delete(id) != 0;
@@ -43,6 +45,10 @@ public class DataJpaVoteRepository implements VoteRepository {
 
     @Override
     public Vote getTodayVoteUserById(int userId) {
-        return voteRepository.getVoteByUserId(userId, LocalDate.now());
+        return voteRepository.getVoteByUserIdAndVotingDate(userId, LocalDate.now());
+    }
+
+    public List<Vote> getAllVoteByUser(int userId) {
+        return voteRepository.findVoteByUserId(userId);
     }
 }

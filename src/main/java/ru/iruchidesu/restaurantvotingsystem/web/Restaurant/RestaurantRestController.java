@@ -20,13 +20,13 @@ public class RestaurantRestController {
 
     public Restaurant create(Restaurant restaurant) {
         checkNew(restaurant);
-        //TODO RestaurantRestController userID create
+        //TODO RestaurantRestController authorized userID create
         return service.create(restaurant, 100001);
     }
 
     public void update(Restaurant restaurant, int id) {
         assureIdConsistent(restaurant, id);
-        //TODO RestaurantRestController userID update
+        //TODO RestaurantRestController authorized userID update
         service.update(restaurant, 100001);
     }
 
@@ -43,7 +43,7 @@ public class RestaurantRestController {
     }
 
     public void delete(int id) {
-        //TODO RestaurantRestController userID delete
+        //TODO RestaurantRestController authorized userID delete
         service.delete(id, 100001);
     }
 }

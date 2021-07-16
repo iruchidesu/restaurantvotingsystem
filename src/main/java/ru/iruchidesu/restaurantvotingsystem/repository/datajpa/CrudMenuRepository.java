@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
-import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 
 import java.util.List;
 
@@ -20,5 +19,5 @@ public interface CrudMenuRepository extends JpaRepository<Menu, Integer> {
     @Query("SELECT m FROM Menu m WHERE m.localDate=CURRENT_DATE AND m.restaurant.id=:restaurantId")
     Menu getTodayMenuByRestaurantId(@Param("restaurantId") int restaurantId);
 
-    List<Menu> findMenuByRestaurantOrderByLocalDateDesc(Restaurant restaurant);
+    List<Menu> findMenuByRestaurantIdOrderByLocalDateDesc(int restaurantId);
 }

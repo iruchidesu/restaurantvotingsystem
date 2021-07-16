@@ -18,4 +18,6 @@ public interface VoteRepository {
 
     // null if not found
     Vote getTodayVoteUserById(int userId);
+
+    List<Vote> getAllVoteByUser(int userId);
 }

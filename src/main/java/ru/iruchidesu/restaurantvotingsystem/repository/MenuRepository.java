@@ -1,7 +1,6 @@
 package ru.iruchidesu.restaurantvotingsystem.repository;
 
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
-import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 
 import java.util.List;
 
@@ -17,5 +16,5 @@ public interface MenuRepository {
 
     Menu getTodayMenu(int restaurantId);
 
-    List<Menu> getMenusByRestaurant(Restaurant restaurant);
+    List<Menu> getMenusByRestaurant(int restaurantId);
 }

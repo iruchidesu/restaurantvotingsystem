@@ -44,10 +44,6 @@ public class Menu extends AbstractBaseEntity {
         return localDate;
     }
 
-    public void setLocalDate(LocalDate localDate) {
-        this.localDate = localDate;
-    }
-
     public Restaurant getRestaurant() {
         return restaurant;
     }

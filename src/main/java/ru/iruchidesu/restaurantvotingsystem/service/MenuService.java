@@ -7,50 +7,51 @@ import org.springframework.util.Assert;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.repository.MenuRepository;
+import ru.iruchidesu.restaurantvotingsystem.repository.RestaurantRepository;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
 public class MenuService {
-    private final MenuRepository repository;
+    private final MenuRepository menuRepository;
+    private final RestaurantRepository restaurantRepository;
 
-    public MenuService(MenuRepository repository) {
-        this.repository = repository;
+    public MenuService(MenuRepository menuRepository, RestaurantRepository restaurantRepository) {
+        this.menuRepository = menuRepository;
+        this.restaurantRepository = restaurantRepository;
     }
 
     @CacheEvict(value = "menu", allEntries = true)
-    public Menu create(Menu menu, int userId) {
+    public Menu create(Menu menu, int restaurantId, int userId) {
         Assert.notNull(menu, "menu must not be null");
-        return repository.save(menu, userId);
+        Restaurant restaurant = restaurantRepository.get(restaurantId);
+        menu.setRestaurant(restaurant);
+        return menuRepository.save(menu, userId);
     }
 
     @CacheEvict(value = "menu", allEntries = true)
     public void delete(int id, int userId) {
-        checkNotFoundWithId(repository.delete(id, userId), id);
+        checkNotFoundWithId(menuRepository.delete(id, userId), id);
     }
 
     public Menu get(int id) {
-        return checkNotFoundWithId(repository.get(id), id);
+        return checkNotFoundWithId(menuRepository.get(id), id);
     }
 
     @CacheEvict(value = "menu", allEntries = true)
     public void update(Menu menu, int userId) {
         Assert.notNull(menu, "menu must not be null");
-        if (menu.getLocalDate().equals(LocalDate.now())) {
-            checkNotFoundWithId(repository.save(menu, userId), menu.id());
-        }
-
+        checkNotFoundWithId(menuRepository.save(menu, userId), menu.id());
     }
 
     @Cacheable(value = "menu", key = "#restaurantId + '_' + T(java.time.LocalDate).now().toString()")
     public Menu getTodayMenu(int restaurantId) {
-        return checkNotFoundWithId(repository.getTodayMenu(restaurantId), restaurantId);
+        return checkNotFoundWithId(menuRepository.getTodayMenu(restaurantId), restaurantId);
     }
 
-    public List<Menu> getHistoryMenu(Restaurant restaurant) {
-        return repository.getMenusByRestaurant(restaurant);
+    public List<Menu> getHistoryMenu(int restaurantId) {
+        return menuRepository.getMenusByRestaurant(restaurantId);
     }
 }

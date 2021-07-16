@@ -3,6 +3,8 @@ package ru.iruchidesu.restaurantvotingsystem.web.User;
 import org.springframework.stereotype.Controller;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
 import ru.iruchidesu.restaurantvotingsystem.service.UserService;
+import ru.iruchidesu.restaurantvotingsystem.to.UserTo;
+import ru.iruchidesu.restaurantvotingsystem.util.ToUtil;
 
 import java.util.List;
 
@@ -28,17 +30,17 @@ public class ProfileRestController {
         service.update(user);
     }
 
-    public User get() {
-        //TODO ProfileRestController ID get
-        return service.get(100000);
+    public UserTo get() {
+        //TODO ProfileRestController authorized ID get
+        return ToUtil.getUserTo(service.get(100000));
     }
 
-    public List<User> getAll() {
-        return service.getAll();
+    public List<UserTo> getAll() {
+        return ToUtil.getUserTos(service.getAll());
     }
 
-    public User getByMail(String email) {
-        return service.getByEmail(email);
+    public UserTo getByEmail(String email) {
+        return ToUtil.getUserTo(service.getByEmail(email));
     }
 
     public void delete() {

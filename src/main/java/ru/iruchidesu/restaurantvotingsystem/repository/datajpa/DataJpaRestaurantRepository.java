@@ -2,6 +2,7 @@ package ru.iruchidesu.restaurantvotingsystem.repository.datajpa;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.model.Role;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
@@ -22,6 +23,7 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     }
 
     @Override
+    @Transactional
     public Restaurant save(Restaurant restaurant, int userId) {
         User user = userRepository.getById(userId);
         if (user.getRoles().contains(Role.ADMIN)) {
@@ -31,6 +33,7 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     }
 
     @Override
+    @Transactional
     public boolean delete(int id, int userId) {
         User user = userRepository.getById(userId);
         return user.getRoles().contains(Role.ADMIN) && restaurantRepository.delete(id) != 0;

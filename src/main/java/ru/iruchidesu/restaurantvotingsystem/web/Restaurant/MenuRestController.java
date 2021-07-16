@@ -2,8 +2,9 @@ package ru.iruchidesu.restaurantvotingsystem.web.Restaurant;
 
 import org.springframework.stereotype.Controller;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
-import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.service.MenuService;
+import ru.iruchidesu.restaurantvotingsystem.to.MenuTo;
+import ru.iruchidesu.restaurantvotingsystem.util.ToUtil;
 
 import java.util.List;
 
@@ -19,28 +20,28 @@ public class MenuRestController {
         this.service = service;
     }
 
-    public Menu create(Menu menu) {
+    public Menu create(Menu menu, int restaurantId) {
         checkNew(menu);
-        //TODO MenuRestController userID
-        return service.create(menu, 100001);
+        //TODO MenuRestController authorized userID
+        return service.create(menu, restaurantId, 100001);
     }
 
     public void update(Menu menu, int id) {
         assureIdConsistent(menu, id);
-        //TODO MenuRestController userID
+        //TODO MenuRestController authorized userID
         service.update(menu, 100001);
     }
 
-    public Menu getTodayMenu(int restaurantId) {
-        return service.getTodayMenu(restaurantId);
+    public MenuTo getTodayMenu(int restaurantId) {
+        return ToUtil.getMenuTo(service.getTodayMenu(restaurantId));
     }
 
-    public List<Menu> getHistoryMenu(Restaurant restaurant) {
-        return service.getHistoryMenu(restaurant);
+    public List<Menu> getHistoryMenu(int restaurantId) {
+        return service.getHistoryMenu(restaurantId);
     }
 
     public void delete(int id) {
-        //TODO MenuRestController userID
+        //TODO MenuRestController authorized userID
         service.delete(id, 100000);
     }
 }

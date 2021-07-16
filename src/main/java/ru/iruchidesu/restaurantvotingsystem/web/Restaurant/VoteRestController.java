@@ -17,9 +17,10 @@ public class VoteRestController {
         this.service = service;
     }
 
-    public Vote create(Vote vote) {
+    public Vote create(Vote vote, int restaurantId) {
         checkNew(vote);
-        return service.create(vote);
+        //TODO VoteRestController userID authorized create
+        return service.create(vote, restaurantId, 100001);
     }
 
     public void update(Vote vote, int id) {
@@ -36,7 +37,12 @@ public class VoteRestController {
     }
 
     public void delete(int id) {
-        //TODO VoteRestController userID delete
+        //TODO VoteRestController userID authorized delete
         service.delete(id, 100001);
+    }
+
+    public List<Vote> getAllVoteByUser() {
+        //TODO VoteRestController userID authorized getAllVote
+        return service.getAllVoteByUser(100001);
     }
 }
