@@ -4,6 +4,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class Menu extends AbstractBaseEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "dish", joinColumns = @JoinColumn(name = "menu_id"),
             uniqueConstraints = {@UniqueConstraint(columnNames = {"menu_id", "name"}, name = "menu_dish_idx")})
+    @JoinColumn(name = "menu_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Dish> dishes;
 
@@ -42,6 +44,10 @@ public class Menu extends AbstractBaseEntity {
 
     public LocalDate getLocalDate() {
         return localDate;
+    }
+
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
     }
 
     public Restaurant getRestaurant() {

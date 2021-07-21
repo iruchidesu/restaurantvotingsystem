@@ -4,6 +4,7 @@ import org.springframework.stereotype.Controller;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import ru.iruchidesu.restaurantvotingsystem.service.VoteService;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.assureIdConsistent;
@@ -24,8 +25,9 @@ public class VoteRestController {
     }
 
     public void update(Vote vote, int id) {
+        //TODO VoteRestController userID authorized update
         assureIdConsistent(vote, id);
-        service.update(vote);
+        service.update(vote, LocalTime.now(), 100001);
     }
 
     public Vote get(int id) {

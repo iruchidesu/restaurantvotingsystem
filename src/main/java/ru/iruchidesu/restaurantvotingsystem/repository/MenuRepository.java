@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MenuRepository {
     // null if not found, when updated
-    Menu save(Menu menu, int userId);
+    Menu save(Menu menu);
 
     // false if not found
     boolean delete(int id, int userId);

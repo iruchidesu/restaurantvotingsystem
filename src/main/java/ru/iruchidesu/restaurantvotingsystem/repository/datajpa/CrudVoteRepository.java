@@ -14,10 +14,10 @@ import java.util.List;
 public interface CrudVoteRepository extends JpaRepository<Vote, Integer> {
     @Transactional
     @Modifying
-    @Query("DELETE FROM Vote v WHERE v.id=:id")
-    int delete(@Param("id") int id);
+    @Query("DELETE FROM Vote v WHERE v.id=:id AND v.user.id=:userId")
+    int delete(@Param("id") int id, @Param("userId") int userId);
 
     Vote getVoteByUserIdAndVotingDate(int userId, LocalDate date);
 
-    List<Vote> findVoteByUserId(int userId);
+    List<Vote> findVoteByUserIdOrderByVotingDateDesc(int userId);
 }

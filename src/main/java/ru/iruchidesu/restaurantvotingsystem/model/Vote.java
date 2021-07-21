@@ -12,16 +12,12 @@ public class Vote extends AbstractBaseEntity {
     @NotNull
     private LocalDate votingDate = LocalDate.now();
 
-    @Column(name = "voting_time", nullable = false, columnDefinition = "time default CURRENT_TIME")
-    @NotNull
-    private LocalTime votingTime = LocalTime.now();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @NotNull
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "restaurant_id", nullable = false)
     @NotNull
     private Restaurant restaurant;
@@ -30,10 +26,9 @@ public class Vote extends AbstractBaseEntity {
 
     }
 
-    public Vote(Integer id, LocalDate votingDate, LocalTime votingTime) {
+    public Vote(Integer id, LocalDate votingDate) {
         super(id);
         this.votingDate = votingDate;
-        this.votingTime = votingTime;
     }
 
     public LocalDate getVotingDate() {
@@ -42,14 +37,6 @@ public class Vote extends AbstractBaseEntity {
 
     public void setVotingDate(LocalDate votingDate) {
         this.votingDate = votingDate;
-    }
-
-    public LocalTime getVotingTime() {
-        return votingTime;
-    }
-
-    public void setVotingTime(LocalTime votingTime) {
-        this.votingTime = votingTime;
     }
 
     public User getUser() {

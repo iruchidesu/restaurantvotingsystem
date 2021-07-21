@@ -35,7 +35,7 @@ public class VoteService {
         User user = userRepository.get(userId);
         vote.setRestaurant(restaurant);
         vote.setUser(user);
-        return voteRepository.save(vote);
+        return voteRepository.save(vote, userId);
     }
 
     public void delete(int id, int userId) {
@@ -50,15 +50,19 @@ public class VoteService {
         return voteRepository.getAll();
     }
 
-    public void update(Vote vote) {
+    public void update(Vote vote, LocalTime time, int userId) {
         Assert.notNull(vote, "vote must not be null");
-        if (LocalTime.now().isAfter(VOTE_UPDATE_TIME)) {
+        if (time.isAfter(VOTE_UPDATE_TIME)) {
             throw new VoteUpdateTimeException("it's too late to change your vote");
         }
-        checkNotFoundWithId(voteRepository.save(vote), vote.id());
+        checkNotFoundWithId(voteRepository.save(vote, userId), vote.id());
     }
 
     public List<Vote> getAllVoteByUser(int userId) {
         return voteRepository.getAllVoteByUser(userId);
+    }
+
+    public Vote getTodayVoteByUser(int userId) {
+        return voteRepository.getTodayVoteUserById(userId);
     }
 }

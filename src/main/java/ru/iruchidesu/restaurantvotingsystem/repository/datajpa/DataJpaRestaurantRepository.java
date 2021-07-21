@@ -36,7 +36,7 @@ public class DataJpaRestaurantRepository implements RestaurantRepository {
     @Transactional
     public boolean delete(int id, int userId) {
         User user = userRepository.getById(userId);
-        return user.getRoles().contains(Role.ADMIN) && restaurantRepository.delete(id) != 0;
+        return restaurantRepository.delete(id) != 0;
     }
 
     @Override

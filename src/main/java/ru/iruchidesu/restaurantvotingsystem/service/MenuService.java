@@ -24,11 +24,11 @@ public class MenuService {
     }
 
     @CacheEvict(value = "menu", allEntries = true)
-    public Menu create(Menu menu, int restaurantId, int userId) {
+    public Menu create(Menu menu, int restaurantId) {
         Assert.notNull(menu, "menu must not be null");
         Restaurant restaurant = restaurantRepository.get(restaurantId);
         menu.setRestaurant(restaurant);
-        return menuRepository.save(menu, userId);
+        return menuRepository.save(menu);
     }
 
     @CacheEvict(value = "menu", allEntries = true)
@@ -41,9 +41,9 @@ public class MenuService {
     }
 
     @CacheEvict(value = "menu", allEntries = true)
-    public void update(Menu menu, int userId) {
+    public void update(Menu menu) {
         Assert.notNull(menu, "menu must not be null");
-        checkNotFoundWithId(menuRepository.save(menu, userId), menu.id());
+        checkNotFoundWithId(menuRepository.save(menu), menu.id());
     }
 
     @Cacheable(value = "menu", key = "#restaurantId + '_' + T(java.time.LocalDate).now().toString()")

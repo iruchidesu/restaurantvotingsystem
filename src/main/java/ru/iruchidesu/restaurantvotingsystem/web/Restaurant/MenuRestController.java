@@ -22,14 +22,13 @@ public class MenuRestController {
 
     public Menu create(Menu menu, int restaurantId) {
         checkNew(menu);
-        //TODO MenuRestController authorized userID
-        return service.create(menu, restaurantId, 100001);
+        return service.create(menu, restaurantId);
     }
 
     public void update(Menu menu, int id) {
         assureIdConsistent(menu, id);
         //TODO MenuRestController authorized userID
-        service.update(menu, 100001);
+        service.update(menu);
     }
 
     public MenuTo getTodayMenu(int restaurantId) {

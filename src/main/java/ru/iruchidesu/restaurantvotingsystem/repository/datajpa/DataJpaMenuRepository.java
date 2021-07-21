@@ -3,7 +3,6 @@ package ru.iruchidesu.restaurantvotingsystem.repository.datajpa;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
-import ru.iruchidesu.restaurantvotingsystem.model.Role;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
 import ru.iruchidesu.restaurantvotingsystem.repository.MenuRepository;
 
@@ -23,9 +22,8 @@ public class DataJpaMenuRepository implements MenuRepository {
 
     @Override
     @Transactional
-    public Menu save(Menu menu, int userId) {
-        User user = userRepository.getById(userId);
-        if (user.getRoles().contains(Role.ADMIN) && menu.getLocalDate().equals(LocalDate.now())) {
+    public Menu save(Menu menu) {
+        if (menu.getLocalDate().isEqual(LocalDate.now())) {
             return menuRepository.save(menu);
         }
         return null;
@@ -35,7 +33,7 @@ public class DataJpaMenuRepository implements MenuRepository {
     @Transactional
     public boolean delete(int id, int userId) {
         User user = userRepository.getById(userId);
-        return user.getRoles().contains(Role.ADMIN) && menuRepository.delete(id) != 0;
+        return menuRepository.delete(id) != 0;
     }
 
     @Override
@@ -50,6 +48,6 @@ public class DataJpaMenuRepository implements MenuRepository {
 
     @Override
     public List<Menu> getMenusByRestaurant(int restaurantId) {
-        return menuRepository.findMenuByRestaurantIdOrderByLocalDateDesc(restaurantId);
+        return menuRepository.getMenuByRestaurantIdOrderByLocalDateDesc(restaurantId);
     }
 }
