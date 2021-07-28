@@ -22,4 +22,10 @@ public class ToUtil {
         users.forEach(user -> tos.add(getUserTo(user)));
         return tos;
     }
+
+    public static List<MenuTo> getMenuTos(List<Menu> menus) {
+        List<MenuTo> tos = new ArrayList<>();
+        menus.forEach(menu -> tos.add(getMenuTo(menu)));
+        return tos;
+    }
 }

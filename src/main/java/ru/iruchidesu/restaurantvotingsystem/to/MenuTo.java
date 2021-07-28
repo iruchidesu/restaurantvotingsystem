@@ -2,9 +2,12 @@ package ru.iruchidesu.restaurantvotingsystem.to;
 
 import ru.iruchidesu.restaurantvotingsystem.model.Dish;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Objects;
 
 public class MenuTo {
+    @NotEmpty
     private List<Dish> dishes;
 
     public MenuTo() {

@@ -11,7 +11,7 @@ import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant
 import static ru.iruchidesu.restaurantvotingsystem.model.AbstractBaseEntity.START_SEQ;
 
 public class MenuTestData {
-    public static final MatcherFactory<Menu> MATCHER = MatcherFactory.usingIgnoringFieldsComparator("restaurant");
+    public static final MatcherFactory<Menu> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Menu.class, "restaurant");
 
     public static final int MENU1_R1_ID = START_SEQ + 4;
     public static final int MENU2_R1_ID = START_SEQ + 5;

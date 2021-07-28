@@ -8,7 +8,9 @@ import ru.iruchidesu.restaurantvotingsystem.model.Menu;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.repository.MenuRepository;
 import ru.iruchidesu.restaurantvotingsystem.repository.RestaurantRepository;
+import ru.iruchidesu.restaurantvotingsystem.to.MenuTo;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
@@ -24,8 +26,9 @@ public class MenuService {
     }
 
     @CacheEvict(value = "menu", allEntries = true)
-    public Menu create(Menu menu, int restaurantId) {
-        Assert.notNull(menu, "menu must not be null");
+    public Menu create(MenuTo menuTo, int restaurantId) {
+        Assert.notNull(menuTo, "menu must not be null");
+        Menu menu = new Menu(null, LocalDate.now(), menuTo.getDishes());
         Restaurant restaurant = restaurantRepository.get(restaurantId);
         menu.setRestaurant(restaurant);
         return menuRepository.save(menu);
@@ -41,8 +44,10 @@ public class MenuService {
     }
 
     @CacheEvict(value = "menu", allEntries = true)
-    public void update(Menu menu) {
-        Assert.notNull(menu, "menu must not be null");
+    public void update(MenuTo menuTo, int restaurantId) {
+        Assert.notNull(menuTo, "menu must not be null");
+        Menu menu = getTodayMenu(restaurantId);
+        menu.setDishes(menuTo.getDishes());
         checkNotFoundWithId(menuRepository.save(menu), menu.id());
     }
 
