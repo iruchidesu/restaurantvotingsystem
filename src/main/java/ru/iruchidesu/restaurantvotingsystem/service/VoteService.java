@@ -10,6 +10,7 @@ import ru.iruchidesu.restaurantvotingsystem.repository.UserRepository;
 import ru.iruchidesu.restaurantvotingsystem.repository.VoteRepository;
 import ru.iruchidesu.restaurantvotingsystem.util.exception.VoteUpdateTimeException;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -29,17 +30,17 @@ public class VoteService {
         this.userRepository = userRepository;
     }
 
-    public Vote create(Vote vote, int restaurantId, int userId) {
-        Assert.notNull(vote, "vote must not be null");
+    public Vote create(int restaurantId, int userId) {
         Restaurant restaurant = restaurantRepository.get(restaurantId);
         User user = userRepository.get(userId);
+        Vote vote = new Vote();
         vote.setRestaurant(restaurant);
         vote.setUser(user);
         return voteRepository.save(vote, userId);
     }
 
     public void delete(int id, int userId) {
-        checkNotFoundWithId(voteRepository.delete(id, userId), id);
+        checkNotFoundWithId(voteRepository.deleteByDate(userId, LocalDate.now()), id);
     }
 
     public Vote get(int id) {
@@ -50,11 +51,16 @@ public class VoteService {
         return voteRepository.getAll();
     }
 
-    public void update(Vote vote, LocalTime time, int userId) {
-        Assert.notNull(vote, "vote must not be null");
+    public void update(int restaurantId, LocalTime time, int userId) {
         if (time.isAfter(VOTE_UPDATE_TIME)) {
             throw new VoteUpdateTimeException("it's too late to change your vote");
         }
+        Vote vote = getTodayVoteByUser(userId);
+        Assert.notNull(vote, "Today vote not found");
+        User user = userRepository.get(userId);
+        vote.setUser(user);
+        Restaurant restaurant = restaurantRepository.get(restaurantId);
+        vote.setRestaurant(restaurant);
         checkNotFoundWithId(voteRepository.save(vote, userId), vote.id());
     }
 

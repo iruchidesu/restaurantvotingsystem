@@ -10,7 +10,6 @@ import ru.iruchidesu.restaurantvotingsystem.util.exception.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.util.exception.VoteUpdateTimeException;
 
 import javax.validation.ConstraintViolationException;
-import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +29,7 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void create() {
-        Vote created = service.create(getNew(), RESTAURANT2_ID, ADMIN_ID);
+        Vote created = service.create(RESTAURANT2_ID, ADMIN_ID);
         int newId = created.id();
         Vote newVote = getNew();
         newVote.setId(newId);
@@ -48,7 +47,7 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void deleteNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, USER_ID));
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, ADMIN_ID));
     }
 
     @Test
@@ -75,31 +74,37 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void update() {
-        Vote updated = getUpdated();
-        service.update(updated, BEFORE_FORBIDDEN_TIME, USER_ID);
+        service.update(RESTAURANT2_ID, BEFORE_FORBIDDEN_TIME, USER_ID);
         MATCHER.assertMatch(service.get(VOTE_TODAY1_ID), getUpdated());
     }
 
     @Test
     void updateForbiddenTime() {
-        Vote updated = getUpdated();
-        VoteUpdateTimeException exception = assertThrows(VoteUpdateTimeException.class, () -> service.update(updated, AFTER_FORBIDDEN_TIME, USER_ID));
+        VoteUpdateTimeException exception = assertThrows(VoteUpdateTimeException.class,
+                () -> service.update(RESTAURANT2_ID, AFTER_FORBIDDEN_TIME, USER_ID));
         Assertions.assertEquals("it's too late to change your vote", exception.getMessage());
         MATCHER.assertMatch(service.get(VOTE_TODAY1_ID), voteToday1);
     }
 
     @Test
     void updateNotFoundRestaurant() {
-        Vote updated = getUpdated();
-        updated.setRestaurant(null);
         validateRootCause(ConstraintViolationException.class,
-                () -> service.update(updated, BEFORE_FORBIDDEN_TIME, USER_ID));
+                () -> service.update(RestaurantTestData.NOT_FOUND, BEFORE_FORBIDDEN_TIME, USER_ID));
     }
 
     @Test
-    void updateNotOwn() {
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> service.update(getUpdated(), BEFORE_FORBIDDEN_TIME, ADMIN_ID));
-        Assertions.assertEquals("Not found entity with id=" + VOTE_TODAY1_ID, exception.getMessage());
+    void updateNotFound() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.update(RESTAURANT2_ID, BEFORE_FORBIDDEN_TIME, ADMIN_ID));
+        Assertions.assertEquals("Today vote not found", exception.getMessage());
+        MATCHER.assertMatch(service.get(VOTE_TODAY1_ID), voteToday1);
+    }
+
+    @Test
+    void updateNotFoundUser() {
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.update(RESTAURANT2_ID, BEFORE_FORBIDDEN_TIME, UserTestData.NOT_FOUND));
+        Assertions.assertEquals("Today vote not found", exception.getMessage());
         MATCHER.assertMatch(service.get(VOTE_TODAY1_ID), voteToday1);
     }
 
@@ -117,10 +122,8 @@ public class VoteServiceTest extends AbstractServiceTest {
     @Test
     void createWithException() throws Exception {
         validateRootCause(ConstraintViolationException.class,
-                () -> service.create(new Vote(null, null), RESTAURANT2_ID, ADMIN_ID));
+                () -> service.create(RestaurantTestData.NOT_FOUND, ADMIN_ID));
         validateRootCause(ConstraintViolationException.class,
-                () -> service.create(new Vote(null, LocalDate.now()), RestaurantTestData.NOT_FOUND, ADMIN_ID));
-        validateRootCause(ConstraintViolationException.class,
-                () -> service.create(new Vote(null, LocalDate.now()), RESTAURANT2_ID, UserTestData.NOT_FOUND));
+                () -> service.create(RESTAURANT2_ID, UserTestData.NOT_FOUND));
     }
 }

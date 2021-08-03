@@ -35,8 +35,8 @@ public class MenuService {
     }
 
     @CacheEvict(value = "menu", allEntries = true)
-    public void delete(int id, int userId) {
-        checkNotFoundWithId(menuRepository.delete(id, userId), id);
+    public void deleteTodayMenu(int restaurantId) {
+        checkNotFoundWithId(menuRepository.deleteByDate(restaurantId, LocalDate.now()), restaurantId);
     }
 
     public Menu get(int id) {
@@ -53,7 +53,7 @@ public class MenuService {
 
     @Cacheable(value = "menu", key = "#restaurantId + '_' + T(java.time.LocalDate).now().toString()")
     public Menu getTodayMenu(int restaurantId) {
-        return checkNotFoundWithId(menuRepository.getTodayMenu(restaurantId), restaurantId);
+        return checkNotFoundWithId(menuRepository.getMenuByDate(restaurantId, LocalDate.now()), restaurantId);
     }
 
     public List<Menu> getHistoryMenu(int restaurantId) {

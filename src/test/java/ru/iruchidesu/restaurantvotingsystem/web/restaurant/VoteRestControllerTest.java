@@ -33,10 +33,8 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void create() throws Exception {
         Vote newVote = VoteTestData.getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "restaurant/" + RESTAURANT2_ID)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newVote)))
-                .andExpect(status().isCreated());
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT2_ID + "/vote"))
+                .andExpect(status().isOk());
 
         Vote created = MATCHER.readFromJson(action);
         int newId = created.id();
@@ -50,7 +48,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
     void update() throws Exception {
         Assumptions.assumeTrue(LocalTime.now().isBefore(LocalTime.of(11, 0)));
         Vote updated = getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + VOTE_TODAY1_ID)
+        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT2_ID + "/vote")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
@@ -61,7 +59,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + VOTE_TODAY1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL + "vote/" + VOTE_TODAY1_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentJson(voteToday1));
@@ -69,7 +67,7 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "/all"))
+        perform(MockMvcRequestBuilders.get(REST_URL + "vote/all"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentJson(all));
@@ -77,14 +75,14 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + VOTE_TODAY1_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + "vote/" + VOTE_TODAY1_ID))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> voteService.get(VOTE_TODAY1_ID));
     }
 
     @Test
     void getAllVoteByUser() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL))
+        perform(MockMvcRequestBuilders.get(REST_URL + "vote"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentJson(voteToday1, vote1));

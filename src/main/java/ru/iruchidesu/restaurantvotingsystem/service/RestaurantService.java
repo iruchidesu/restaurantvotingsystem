@@ -8,6 +8,7 @@ import org.springframework.util.Assert;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.repository.RestaurantRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFound;
@@ -22,9 +23,9 @@ public class RestaurantService {
     }
 
     @CacheEvict(value = "restaurant", allEntries = true)
-    public Restaurant create(Restaurant restaurant, int userId) {
+    public Restaurant create(Restaurant restaurant) {
         Assert.notNull(restaurant, "restaurant must not be null");
-        return repository.save(restaurant, userId);
+        return repository.save(restaurant);
     }
 
     @Caching(
@@ -33,8 +34,8 @@ public class RestaurantService {
                     @CacheEvict(value = "menu", key = "#id + '_' + T(java.time.LocalDate).now().toString()")
             }
     )
-    public void delete(int id, int userId) {
-        checkNotFoundWithId(repository.delete(id, userId), id);
+    public void delete(int id) {
+        checkNotFoundWithId(repository.delete(id), id);
     }
 
     public Restaurant get(int id) {
@@ -52,8 +53,12 @@ public class RestaurantService {
     }
 
     @CacheEvict(value = "restaurant", allEntries = true)
-    public void update(Restaurant restaurant, int userId) {
+    public void update(Restaurant restaurant) {
         Assert.notNull(restaurant, "restaurant must not be null");
-        checkNotFoundWithId(repository.save(restaurant, userId), restaurant.id());
+        checkNotFoundWithId(repository.save(restaurant), restaurant.id());
+    }
+
+    public List<Restaurant> getWithMenu() {
+        return repository.getWithMenu(LocalDate.now());
     }
 }

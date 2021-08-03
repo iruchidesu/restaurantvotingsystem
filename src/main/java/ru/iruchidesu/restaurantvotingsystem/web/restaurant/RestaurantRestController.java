@@ -1,5 +1,7 @@
 package ru.iruchidesu.restaurantvotingsystem.web.restaurant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ public class RestaurantRestController {
 
     static final String REST_URL = "/rest/restaurant";
 
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     private final RestaurantService service;
 
     public RestaurantRestController(RestaurantService service) {
@@ -28,9 +32,9 @@ public class RestaurantRestController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Restaurant> create(@RequestBody Restaurant restaurant) {
+        log.info("create {}", restaurant);
         checkNew(restaurant);
-        //TODO RestaurantRestController authorized userID create
-        Restaurant created = service.create(restaurant, 100001);
+        Restaurant created = service.create(restaurant);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
                 .buildAndExpand(created.getId()).toUri();
@@ -40,30 +44,39 @@ public class RestaurantRestController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody Restaurant restaurant, @PathVariable int id) {
+        log.info("update {}", restaurant);
         assureIdConsistent(restaurant, id);
-        //TODO RestaurantRestController authorized userID update
-        service.update(restaurant, 100001);
+        service.update(restaurant);
     }
 
     @GetMapping("/{id}")
     public Restaurant get(@PathVariable int id) {
+        log.info("get {}", id);
         return service.get(id);
     }
 
     @GetMapping
     public List<Restaurant> getAll() {
+        log.info("getAll");
         return service.getAll();
     }
 
     @GetMapping("/by")
     public Restaurant getByName(String name) {
+        log.info("getByName {}", name);
         return service.getByName(name);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
-        //TODO RestaurantRestController authorized userID delete
-        service.delete(id, 100001);
+        log.info("delete {}", id);
+        service.delete(id);
+    }
+
+    @GetMapping("/with-today-menu")
+    public List<Restaurant> getWithMenu() {
+        log.info("get with today menu");
+        return service.getWithMenu();
     }
 }

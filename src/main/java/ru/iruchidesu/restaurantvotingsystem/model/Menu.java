@@ -1,5 +1,6 @@
 package ru.iruchidesu.restaurantvotingsystem.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -30,6 +31,7 @@ public class Menu extends AbstractBaseEntity {
     @JoinColumn(name = "restaurant_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
+    @JsonBackReference
     private Restaurant restaurant;
 
     public Menu() {

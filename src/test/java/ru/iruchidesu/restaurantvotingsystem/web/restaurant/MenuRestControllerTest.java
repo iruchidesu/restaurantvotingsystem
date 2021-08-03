@@ -22,7 +22,7 @@ import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.RESTAURANT
 import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.RESTAURANT2_ID;
 
 class MenuRestControllerTest extends AbstractControllerTest {
-    private static final String REST_URL = MenuRestController.REST_URL + '/';
+    private static final String REST_URL = "/rest/restaurant/";
 
     @Autowired
     private MenuService menuService;
@@ -32,7 +32,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
         Menu newMenu = MenuTestData.getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT2_ID + "/menu")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newMenu)))
+                .content(JsonUtil.writeValue(ToUtil.getMenuTo(newMenu))))
                 .andExpect(status().isCreated());
 
         Menu created = MATCHER.readFromJson(action);
@@ -59,7 +59,7 @@ class MenuRestControllerTest extends AbstractControllerTest {
         perform(MockMvcRequestBuilders.get(REST_URL + RESTAURANT1_ID + "/menu"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(menuTodayR1));
+                .andExpect(MENU_TO_MATCHER.contentJson(ToUtil.getMenuTo(menuTodayR1)));
     }
 
     @Test
@@ -72,8 +72,8 @@ class MenuRestControllerTest extends AbstractControllerTest {
 
     @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + "menu/" + MENU_TODAY_R1_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + RESTAURANT1_ID + "/menu"))
                 .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> menuService.get(MENU_TODAY_R1_ID));
+        assertThrows(NotFoundException.class, () -> menuService.get(RESTAURANT1_ID));
     }
 }

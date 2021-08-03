@@ -12,6 +12,8 @@ import ru.iruchidesu.restaurantvotingsystem.util.exception.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.web.AbstractControllerTest;
 import ru.iruchidesu.restaurantvotingsystem.web.json.JsonUtil;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -74,6 +76,15 @@ class RestaurantRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentJson(restaurant1));
+    }
+
+    @Test
+    void getWithMenu() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL + "with-today-menu"))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(MATCHER_WITH_MENU.contentJson(List.of(restaurant1)));
     }
 
     @Test

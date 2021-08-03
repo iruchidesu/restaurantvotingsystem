@@ -2,6 +2,7 @@ package ru.iruchidesu.restaurantvotingsystem.repository;
 
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface VoteRepository {
@@ -9,7 +10,7 @@ public interface VoteRepository {
     Vote save(Vote vote, int userId);
 
     // false if not found
-    boolean delete(int id, int userId);
+    boolean deleteByDate(int userId, LocalDate votingDate);
 
     // null if not found
     Vote get(int id);

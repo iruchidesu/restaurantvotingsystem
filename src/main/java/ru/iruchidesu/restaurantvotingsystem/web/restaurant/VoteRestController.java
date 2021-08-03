@@ -1,25 +1,24 @@
 package ru.iruchidesu.restaurantvotingsystem.web.restaurant;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import ru.iruchidesu.restaurantvotingsystem.service.VoteService;
 
-import java.net.URI;
 import java.time.LocalTime;
 import java.util.List;
-
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.assureIdConsistent;
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNew;
 
 @RestController
 @RequestMapping(value = VoteRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class VoteRestController {
 
-    static final String REST_URL = "/rest/vote";
+    static final String REST_URL = "/rest/restaurant";
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final VoteService service;
 
@@ -27,45 +26,46 @@ public class VoteRestController {
         this.service = service;
     }
 
-    @PostMapping(value = "/restaurant/{restaurantId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Vote> create(@RequestBody Vote vote, @PathVariable int restaurantId) {
-        checkNew(vote);
+    @PostMapping("/{restaurantId}/vote")
+    public ResponseEntity<Vote> create(@PathVariable int restaurantId) {
         //TODO VoteRestController userID authorized create
-        Vote created = service.create(vote, restaurantId, 100000);
-        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(REST_URL + "/restaurant/{restaurantId}")
-                .buildAndExpand(created.getId()).toUri();
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        log.info("create with restaurantId {} by user with id {}", restaurantId, 100000);
+        Vote created = service.create(restaurantId, 100000);
+        return ResponseEntity.ok().body(created);
     }
 
-    @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{restaurantId}/vote", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody Vote vote, @PathVariable int id) {
+    public void update(@PathVariable int restaurantId) {
         //TODO VoteRestController userID authorized update
-        assureIdConsistent(vote, id);
-        service.update(vote, LocalTime.now(), 100000);
+        log.info("update (new restaurantId {}) by user with id {}", restaurantId, 100000);
+        service.update(restaurantId, LocalTime.now(), 100000);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/vote/{id}")
     public Vote get(@PathVariable int id) {
+        log.info("get with id {}", id);
         return service.get(id);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/vote/all")
     public List<Vote> getAll() {
+        log.info("getAll");
         return service.getAll();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/vote/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) {
         //TODO VoteRestController userID authorized delete
+        log.info("delete today for user with id {}", 100000);
         service.delete(id, 100000);
     }
 
-    @GetMapping
+    @GetMapping("/vote")
     public List<Vote> getAllVoteByUser() {
         //TODO VoteRestController userID authorized getAllVote
+        log.info("get all for user with id {}", 100000);
         return service.getAllVoteByUser(100000);
     }
 }

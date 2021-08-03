@@ -28,8 +28,8 @@ public class DataJpaVoteRepository implements VoteRepository {
 
     @Override
     @Transactional
-    public boolean delete(int id, int userId) {
-        return voteRepository.delete(id, userId) != 0;
+    public boolean deleteByDate(int userId, LocalDate votingDate) {
+        return voteRepository.delete(userId, votingDate) != 0;
     }
 
     @Override
@@ -48,6 +48,6 @@ public class DataJpaVoteRepository implements VoteRepository {
     }
 
     public List<Vote> getAllVoteByUser(int userId) {
-        return voteRepository.findVoteByUserIdOrderByVotingDateDesc(userId);
+        return voteRepository.getVoteByUserIdOrderByVotingDateDesc(userId);
     }
 }
