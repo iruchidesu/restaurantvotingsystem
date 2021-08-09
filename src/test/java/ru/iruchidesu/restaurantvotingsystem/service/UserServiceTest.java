@@ -58,7 +58,7 @@ public class UserServiceTest extends AbstractServiceTest {
 
     @Test
     void getByEmail() {
-        User user = service.getByEmail("admin@gmail.com");
+        User user = service.getByEmail(admin.getEmail());
         MATCHER.assertMatch(user, admin);
     }
 

@@ -67,12 +67,6 @@ public class VoteServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void getAll() {
-        List<Vote> all = service.getAll();
-        MATCHER.assertMatch(all, voteToday1, vote2, vote1);
-    }
-
-    @Test
     void update() {
         service.update(RESTAURANT2_ID, BEFORE_FORBIDDEN_TIME, USER_ID);
         MATCHER.assertMatch(service.get(VOTE_TODAY1_ID), getUpdated());

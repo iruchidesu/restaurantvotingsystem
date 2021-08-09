@@ -1,12 +1,31 @@
 package ru.iruchidesu.restaurantvotingsystem.to;
 
-public class UserTo {
+import ru.iruchidesu.restaurantvotingsystem.HasId;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.io.Serial;
+import java.io.Serializable;
+
+public class UserTo implements HasId, Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private Integer id;
 
+    @NotBlank
+    @Size(min = 2, max = 100)
     private String name;
 
+    @Email
+    @NotBlank
+    @Size(max = 100)
     private String email;
 
+    @NotBlank
+    @Size(min = 5, max = 32)
     private String password;
 
     public UserTo(Integer id, String name, String email, String password) {

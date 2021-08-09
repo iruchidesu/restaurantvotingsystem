@@ -15,8 +15,6 @@ public interface VoteRepository {
     // null if not found
     Vote get(int id);
 
-    List<Vote> getAll();
-
     // null if not found
     Vote getTodayVoteUserById(int userId);
 

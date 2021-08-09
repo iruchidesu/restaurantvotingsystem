@@ -21,11 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.RESTAURANT2_ID;
 import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant2;
+import static ru.iruchidesu.restaurantvotingsystem.TestUtil.userHttpBasic;
+import static ru.iruchidesu.restaurantvotingsystem.UserTestData.user;
 import static ru.iruchidesu.restaurantvotingsystem.VoteTestData.*;
 
-class VoteRestControllerTest extends AbstractControllerTest {
+class VoteControllerTest extends AbstractControllerTest {
 
-    private static final String REST_URL = VoteRestController.REST_URL + '/';
+    private static final String REST_URL = VoteController.REST_URL + '/';
 
     @Autowired
     private VoteService voteService;
@@ -33,7 +35,9 @@ class VoteRestControllerTest extends AbstractControllerTest {
     @Test
     void create() throws Exception {
         Vote newVote = VoteTestData.getNew();
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT2_ID + "/vote"))
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk());
 
         Vote created = MATCHER.readFromJson(action);
@@ -46,10 +50,12 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void update() throws Exception {
+        //TODO что-то придумать с заменой даты
         Assumptions.assumeTrue(LocalTime.now().isBefore(LocalTime.of(11, 0)));
         Vote updated = getUpdated();
-        perform(MockMvcRequestBuilders.put(REST_URL + RESTAURANT2_ID + "/vote")
-                .contentType(MediaType.APPLICATION_JSON)
+        perform(MockMvcRequestBuilders.put(REST_URL)
+                .param("restaurantId", String.valueOf(RESTAURANT2_ID))
+                .with(userHttpBasic(user))
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())
                 .andExpect(status().isNoContent());
@@ -59,32 +65,33 @@ class VoteRestControllerTest extends AbstractControllerTest {
 
     @Test
     void get() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "vote/" + VOTE_TODAY1_ID))
+        perform(MockMvcRequestBuilders.get(REST_URL)
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentJson(voteToday1));
     }
 
     @Test
-    void getAll() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "vote/all"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(MATCHER.contentJson(all));
-    }
-
-    @Test
     void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + "vote/" + VOTE_TODAY1_ID))
+        perform(MockMvcRequestBuilders.delete(REST_URL + VOTE_TODAY1_ID)
+                .with(userHttpBasic(user)))
                 .andExpect(status().isNoContent());
         assertThrows(NotFoundException.class, () -> voteService.get(VOTE_TODAY1_ID));
     }
 
     @Test
     void getAllVoteByUser() throws Exception {
-        perform(MockMvcRequestBuilders.get(REST_URL + "vote"))
+        perform(MockMvcRequestBuilders.get(REST_URL + "all")
+                .with(userHttpBasic(user)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(MATCHER.contentJson(voteToday1, vote1));
+    }
+
+    @Test
+    void getUnAuth() throws Exception {
+        perform(MockMvcRequestBuilders.get(REST_URL))
+                .andExpect(status().isUnauthorized());
     }
 }

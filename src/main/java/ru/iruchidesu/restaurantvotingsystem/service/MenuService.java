@@ -3,6 +3,7 @@ package ru.iruchidesu.restaurantvotingsystem.service;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
@@ -26,6 +27,7 @@ public class MenuService {
     }
 
     @CacheEvict(value = "menu", allEntries = true)
+    @Transactional
     public Menu create(MenuTo menuTo, int restaurantId) {
         Assert.notNull(menuTo, "menu must not be null");
         Menu menu = new Menu(null, LocalDate.now(), menuTo.getDishes());
@@ -44,11 +46,13 @@ public class MenuService {
     }
 
     @CacheEvict(value = "menu", allEntries = true)
+    @Transactional
     public void update(MenuTo menuTo, int restaurantId) {
         Assert.notNull(menuTo, "menu must not be null");
         Menu menu = getTodayMenu(restaurantId);
+        Restaurant restaurant = restaurantRepository.get(restaurantId);
+        menu.setRestaurant(restaurant);
         menu.setDishes(menuTo.getDishes());
-        checkNotFoundWithId(menuRepository.save(menu), menu.id());
     }
 
     @Cacheable(value = "menu", key = "#restaurantId + '_' + T(java.time.LocalDate).now().toString()")

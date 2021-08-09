@@ -1,0 +1,51 @@
+spring:
+  jpa:
+    open-in-view: true
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.HSQLDialect
+        default_batch_fetch_size: 20
+        jdbc.batch_size: 20
+        format_sql: true
+        use_sql_comments: true
+        jpa:
+          compliance:
+            proxy: false
+        cache:
+          use_second_level_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.internal.JCacheRegionFactory
+        javax:
+          persistence:
+            sharedCache:
+              #enable selective caching mode - only entities with @Cacheable annotation will use L2 cache.
+              mode: ENABLE_SELECTIVE
+          cache:
+            missing_cache_strategy: create
+            provider: org.ehcache.jsr107.EhcacheCachingProvider
+    database: hsql
+    database-platform: HSQL
+  datasource:
+    url: jdbc:hsqldb:mem:restaurantvotingsystem
+    username: sa
+    password:
+  cache:
+    jcache:
+      config: classpath:cache/ehcache.xml
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    default-property-inclusion: non_null
+    visibility:
+      field: any
+      getter: none
+      setter: none
+      is-getter: none
+server.servlet:
+  encoding:
+    charset: UTF-8 # Charset of HTTP requests and responses. Added to the "Content-Type" header if not set explicitly
+    enabled: true # Enable http encoding support
+    force: true

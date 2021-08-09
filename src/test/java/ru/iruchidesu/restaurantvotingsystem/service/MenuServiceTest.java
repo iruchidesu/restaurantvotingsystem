@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import ru.iruchidesu.restaurantvotingsystem.RestaurantTestData;
 import ru.iruchidesu.restaurantvotingsystem.model.Dish;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
-import ru.iruchidesu.restaurantvotingsystem.util.ToUtil;
+import ru.iruchidesu.restaurantvotingsystem.util.MenuUtil;
 import ru.iruchidesu.restaurantvotingsystem.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
@@ -30,7 +30,7 @@ public class MenuServiceTest extends AbstractServiceTest {
 
     @Test
     void create() {
-        Menu created = service.create(ToUtil.getMenuTo(getNew()), RESTAURANT2_ID);
+        Menu created = service.create(MenuUtil.asTo(getNew()), RESTAURANT2_ID);
         int newId = created.id();
         Menu newMenu = getNew();
         newMenu.setId(newId);
@@ -44,14 +44,7 @@ public class MenuServiceTest extends AbstractServiceTest {
         Assumptions.assumeTrue(false);
         Menu newMenu = getNew();
         //TODO что-то придумать с заменой даты
-        Menu created = service.create(ToUtil.getMenuTo(newMenu), RESTAURANT2_ID);
-        Assertions.assertNull(created);
-    }
-
-    @Test
-    void createByUser() {
-        Assumptions.assumeTrue(false);
-        Menu created = service.create(ToUtil.getMenuTo(getNew()), RESTAURANT2_ID);
+        Menu created = service.create(MenuUtil.asTo(newMenu), RESTAURANT2_ID);
         Assertions.assertNull(created);
     }
 
@@ -59,12 +52,6 @@ public class MenuServiceTest extends AbstractServiceTest {
     void delete() {
         service.deleteTodayMenu(RESTAURANT1_ID);
         assertThrows(NotFoundException.class, () -> service.get(MENU_TODAY_R1_ID));
-    }
-
-    @Test
-    void deleteByUser() {
-        Assumptions.assumeTrue(false);
-        assertThrows(NotFoundException.class, () -> service.deleteTodayMenu(RESTAURANT1_ID));
     }
 
     @Test
@@ -87,7 +74,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     void update() {
         Menu updated = getUpdated();
         updated.setRestaurant(restaurant1);
-        service.update(ToUtil.getMenuTo(updated), RESTAURANT1_ID);
+        service.update(MenuUtil.asTo(updated), RESTAURANT1_ID);
         MATCHER.assertMatch(service.get(MENU_TODAY_R1_ID), getUpdated());
     }
 
@@ -95,24 +82,14 @@ public class MenuServiceTest extends AbstractServiceTest {
     void updateNotFoundRestaurant() {
         Menu updated = getUpdated();
         updated.setRestaurant(null);
-        validateRootCause(NotFoundException.class, () -> service.update(ToUtil.getMenuTo(updated), RestaurantTestData.NOT_FOUND));
+        validateRootCause(NotFoundException.class, () -> service.update(MenuUtil.asTo(updated), RestaurantTestData.NOT_FOUND));
     }
 
     @Test
     void updateWithEmptyDishes() {
         Menu updated = getUpdated();
         updated.setDishes(null);
-        validateRootCause(ConstraintViolationException.class, () -> service.update(ToUtil.getMenuTo(updated), RESTAURANT1_ID));
-    }
-
-    @Test
-    void updateByUser() {
-        Assumptions.assumeTrue(false);
-        Menu updated = getUpdated();
-        updated.setRestaurant(restaurant1);
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> service.update(ToUtil.getMenuTo(updated), RESTAURANT1_ID));
-        Assertions.assertEquals("Not found entity with id=" + MENU_TODAY_R1_ID, exception.getMessage());
-        MATCHER.assertMatch(service.get(MENU_TODAY_R1_ID), menuTodayR1);
+        validateRootCause(ConstraintViolationException.class, () -> service.update(MenuUtil.asTo(updated), RESTAURANT1_ID));
     }
 
     @Test
@@ -146,14 +123,14 @@ public class MenuServiceTest extends AbstractServiceTest {
     @Test
     void createWithException() throws Exception {
         validateRootCause(ConstraintViolationException.class,
-                () -> service.create(ToUtil.getMenuTo(new Menu(null, LocalDate.now(), null)), RESTAURANT1_ID));
+                () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), null)), RESTAURANT1_ID));
         validateRootCause(ConstraintViolationException.class,
-                () -> service.create(ToUtil.getMenuTo(new Menu(null, LocalDate.now(), List.of(new Dish(" ", 840)))), RESTAURANT1_ID));
+                () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), List.of(new Dish(" ", 840)))), RESTAURANT1_ID));
         validateRootCause(ConstraintViolationException.class,
-                () -> service.create(ToUtil.getMenuTo(new Menu(null, LocalDate.now(), List.of(new Dish("dish10", 0)))), RESTAURANT1_ID));
+                () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), List.of(new Dish("dish10", 0)))), RESTAURANT1_ID));
         validateRootCause(ConstraintViolationException.class,
-                () -> service.create(ToUtil.getMenuTo(new Menu(null, LocalDate.now(), List.of())), RESTAURANT1_ID));
+                () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), List.of())), RESTAURANT1_ID));
         validateRootCause(ConstraintViolationException.class,
-                () -> service.create(ToUtil.getMenuTo(new Menu(null, LocalDate.now(), List.of(new Dish("dish10", 10)))), RestaurantTestData.NOT_FOUND));
+                () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), List.of(new Dish("dish10", 10)))), RestaurantTestData.NOT_FOUND));
     }
 }

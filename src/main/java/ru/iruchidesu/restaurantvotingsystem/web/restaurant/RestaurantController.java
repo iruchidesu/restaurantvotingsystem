@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
@@ -17,8 +18,8 @@ import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.assureIdC
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNew;
 
 @RestController
-@RequestMapping(value = RestaurantRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class RestaurantRestController {
+@RequestMapping(value = RestaurantController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class RestaurantController {
 
     static final String REST_URL = "/rest/restaurant";
 
@@ -26,11 +27,12 @@ public class RestaurantRestController {
 
     private final RestaurantService service;
 
-    public RestaurantRestController(RestaurantService service) {
+    public RestaurantController(RestaurantService service) {
         this.service = service;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Secured("ROLE_ADMIN")
     public ResponseEntity<Restaurant> create(@RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
         checkNew(restaurant);
@@ -43,6 +45,7 @@ public class RestaurantRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Secured("ROLE_ADMIN")
     public void update(@RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update {}", restaurant);
         assureIdConsistent(restaurant, id);
@@ -69,6 +72,7 @@ public class RestaurantRestController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Secured("ROLE_ADMIN")
     public void delete(@PathVariable int id) {
         log.info("delete {}", id);
         service.delete(id);

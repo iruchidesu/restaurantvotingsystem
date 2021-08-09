@@ -1,6 +1,7 @@
 package ru.iruchidesu.restaurantvotingsystem.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
@@ -30,6 +31,7 @@ public class VoteService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Vote create(int restaurantId, int userId) {
         Restaurant restaurant = restaurantRepository.get(restaurantId);
         User user = userRepository.get(userId);
@@ -47,10 +49,7 @@ public class VoteService {
         return checkNotFoundWithId(voteRepository.get(id), id);
     }
 
-    public List<Vote> getAll() {
-        return voteRepository.getAll();
-    }
-
+    @Transactional
     public void update(int restaurantId, LocalTime time, int userId) {
         if (time.isAfter(VOTE_UPDATE_TIME)) {
             throw new VoteUpdateTimeException("it's too late to change your vote");
@@ -61,7 +60,6 @@ public class VoteService {
         vote.setUser(user);
         Restaurant restaurant = restaurantRepository.get(restaurantId);
         vote.setRestaurant(restaurant);
-        checkNotFoundWithId(voteRepository.save(vote, userId), vote.id());
     }
 
     public List<Vote> getAllVoteByUser(int userId) {

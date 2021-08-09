@@ -1,10 +1,14 @@
 package ru.iruchidesu.restaurantvotingsystem.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import ru.iruchidesu.restaurantvotingsystem.util.JsonDeserializers;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -29,6 +33,8 @@ public class User extends AbstractNamedEntity {
     @Column(name = "password", nullable = false)
     @NotBlank
     @Size(min = 5, max = 100)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @JsonDeserialize(using = JsonDeserializers.PasswordDeserializer.class)
     private String password;
 
     @Column(name = "enabled", nullable = false, columnDefinition = "bool default true")
@@ -74,7 +80,7 @@ public class User extends AbstractNamedEntity {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = StringUtils.hasLength(email) ? email.toLowerCase() : null;
     }
 
     public void setPassword(String password) {

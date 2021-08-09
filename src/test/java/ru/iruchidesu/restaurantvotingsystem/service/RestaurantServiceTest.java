@@ -1,7 +1,5 @@
 package ru.iruchidesu.restaurantvotingsystem.service;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
@@ -29,20 +27,9 @@ public class RestaurantServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void createByUser() {
-        Restaurant created = service.create(getNew());
-
-    }
-
-    @Test
     void delete() {
         service.delete(RESTAURANT1_ID);
         assertThrows(NotFoundException.class, () -> service.get(RESTAURANT1_ID));
-    }
-
-    @Test
-    void deleteByUser() {
-        service.delete(RESTAURANT1_ID);
     }
 
     @Test
@@ -78,14 +65,6 @@ public class RestaurantServiceTest extends AbstractServiceTest {
         Restaurant updated = getUpdated();
         service.update(updated);
         MATCHER.assertMatch(service.get(RESTAURANT1_ID), getUpdated());
-    }
-
-    @Test
-    void updateByUser() {
-        Assumptions.assumeTrue(false);
-        NotFoundException exception = assertThrows(NotFoundException.class, () -> service.update(getUpdated()));
-        Assertions.assertEquals("Not found entity with id=" + RESTAURANT1_ID, exception.getMessage());
-        MATCHER.assertMatch(service.get(RESTAURANT1_ID), restaurant1);
     }
 
     @Test

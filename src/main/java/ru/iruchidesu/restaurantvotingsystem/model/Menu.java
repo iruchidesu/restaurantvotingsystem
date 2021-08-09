@@ -19,6 +19,7 @@ public class Menu extends AbstractBaseEntity {
     @NotNull
     private LocalDate localDate = LocalDate.now();
 
+    @Valid
     @NotEmpty
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "dish", joinColumns = @JoinColumn(name = "menu_id"),

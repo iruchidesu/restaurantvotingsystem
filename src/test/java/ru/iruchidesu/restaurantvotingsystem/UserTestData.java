@@ -2,6 +2,7 @@ package ru.iruchidesu.restaurantvotingsystem;
 
 import ru.iruchidesu.restaurantvotingsystem.model.Role;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
+import ru.iruchidesu.restaurantvotingsystem.to.UserTo;
 
 import java.util.Collections;
 import java.util.Date;
@@ -9,7 +10,8 @@ import java.util.Date;
 import static ru.iruchidesu.restaurantvotingsystem.model.AbstractBaseEntity.START_SEQ;
 
 public class UserTestData {
-    public static final MatcherFactory.Matcher<User> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered");
+    public static final MatcherFactory.Matcher<User> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered", "password");
+    public static final MatcherFactory.Matcher<UserTo> MATCHER_TO = MatcherFactory.usingIgnoringFieldsComparator(UserTo.class, "password");
 
     public static final int USER_ID = START_SEQ;
     public static final int ADMIN_ID = START_SEQ + 1;

@@ -1,5 +1,6 @@
 package ru.iruchidesu.restaurantvotingsystem.repository.datajpa;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -19,5 +20,7 @@ public interface CrudVoteRepository extends JpaRepository<Vote, Integer> {
 
     Vote getVoteByUserIdAndVotingDate(int userId, LocalDate date);
 
+    //    https://stackoverflow.com/a/46013654/548473
+    @EntityGraph(attributePaths = {"user"}, type = EntityGraph.EntityGraphType.LOAD)
     List<Vote> getVoteByUserIdOrderByVotingDateDesc(int userId);
 }

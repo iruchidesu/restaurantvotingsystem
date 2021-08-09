@@ -1,6 +1,5 @@
 package ru.iruchidesu.restaurantvotingsystem.repository.datajpa;
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
@@ -35,11 +34,6 @@ public class DataJpaVoteRepository implements VoteRepository {
     @Override
     public Vote get(int id) {
         return voteRepository.findById(id).orElse(null);
-    }
-
-    @Override
-    public List<Vote> getAll() {
-        return voteRepository.findAll(Sort.by(Sort.Direction.DESC, "votingDate"));
     }
 
     @Override
