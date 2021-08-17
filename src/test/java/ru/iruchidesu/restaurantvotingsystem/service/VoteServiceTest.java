@@ -5,11 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.iruchidesu.restaurantvotingsystem.RestaurantTestData;
 import ru.iruchidesu.restaurantvotingsystem.UserTestData;
+import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
+import ru.iruchidesu.restaurantvotingsystem.error.VoteUpdateTimeException;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
-import ru.iruchidesu.restaurantvotingsystem.util.exception.NotFoundException;
-import ru.iruchidesu.restaurantvotingsystem.util.exception.VoteUpdateTimeException;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -40,19 +39,14 @@ public class VoteServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void delete() {
-        service.delete(VOTE_TODAY1_ID, USER_ID);
+    void deleteToday() {
+        service.deleteToday(USER_ID);
         assertThrows(NotFoundException.class, () -> service.get(VOTE_TODAY1_ID));
     }
 
     @Test
-    void deleteNotFound() {
-        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, ADMIN_ID));
-    }
-
-    @Test
-    void deleteNotOwn() {
-        assertThrows(NotFoundException.class, () -> service.delete(VOTE_TODAY1_ID, ADMIN_ID));
+    void deleteTodayNotFound() {
+        assertThrows(NotFoundException.class, () -> service.deleteToday(ADMIN_ID));
     }
 
     @Test
@@ -82,23 +76,25 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void updateNotFoundRestaurant() {
-        validateRootCause(ConstraintViolationException.class,
+        NotFoundException exception = assertThrows(NotFoundException.class,
                 () -> service.update(RestaurantTestData.NOT_FOUND, BEFORE_FORBIDDEN_TIME, USER_ID));
+        Assertions.assertEquals("Not found restaurant with id = 10", exception.getMessage());
+        MATCHER.assertMatch(service.get(VOTE_TODAY1_ID), voteToday1);
     }
 
     @Test
     void updateNotFound() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        NotFoundException exception = assertThrows(NotFoundException.class,
                 () -> service.update(RESTAURANT2_ID, BEFORE_FORBIDDEN_TIME, ADMIN_ID));
-        Assertions.assertEquals("Today vote not found", exception.getMessage());
+        Assertions.assertEquals("Not found vote with userId = 100001", exception.getMessage());
         MATCHER.assertMatch(service.get(VOTE_TODAY1_ID), voteToday1);
     }
 
     @Test
     void updateNotFoundUser() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        NotFoundException exception = assertThrows(NotFoundException.class,
                 () -> service.update(RESTAURANT2_ID, BEFORE_FORBIDDEN_TIME, UserTestData.NOT_FOUND));
-        Assertions.assertEquals("Today vote not found", exception.getMessage());
+        Assertions.assertEquals("Not found vote with userId = 10", exception.getMessage());
         MATCHER.assertMatch(service.get(VOTE_TODAY1_ID), voteToday1);
     }
 
@@ -114,10 +110,10 @@ public class VoteServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void createWithException() throws Exception {
-        validateRootCause(ConstraintViolationException.class,
+    void createWithException() {
+        validateRootCause(NotFoundException.class,
                 () -> service.create(RestaurantTestData.NOT_FOUND, ADMIN_ID));
-        validateRootCause(ConstraintViolationException.class,
+        validateRootCause(NotFoundException.class,
                 () -> service.create(RESTAURANT2_ID, UserTestData.NOT_FOUND));
     }
 }

@@ -4,10 +4,13 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.cache.support.NoOpCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import ru.iruchidesu.restaurantvotingsystem.web.json.JsonUtil;
+import org.springframework.context.annotation.Profile;
+import ru.iruchidesu.restaurantvotingsystem.util.json.JsonUtil;
 
 @Configuration
 @EnableCaching
@@ -21,5 +24,11 @@ public class AppConfig {
     @Autowired
     public void storeObjectMapper(ObjectMapper objectMapper) {
         JsonUtil.setMapper(objectMapper);
+    }
+
+    @Bean
+    @Profile("test")
+    public CacheManager getNoOpCacheManager() {
+        return new NoOpCacheManager();
     }
 }

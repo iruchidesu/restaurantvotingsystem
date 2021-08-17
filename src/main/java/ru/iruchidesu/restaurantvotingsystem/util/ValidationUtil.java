@@ -3,7 +3,9 @@ package ru.iruchidesu.restaurantvotingsystem.util;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.lang.NonNull;
 import ru.iruchidesu.restaurantvotingsystem.HasId;
-import ru.iruchidesu.restaurantvotingsystem.util.exception.NotFoundException;
+import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
+
+import java.util.function.Supplier;
 
 public class ValidationUtil {
     private ValidationUtil() {
@@ -49,5 +51,11 @@ public class ValidationUtil {
     public static Throwable getRootCause(@NonNull Throwable t) {
         Throwable rootCause = NestedExceptionUtils.getRootCause(t);
         return rootCause != null ? rootCause : t;
+    }
+
+    public static Supplier<NotFoundException> notFoundException(String msg) {
+        return () -> {
+            throw new NotFoundException("Not found " + msg);
+        };
     }
 }

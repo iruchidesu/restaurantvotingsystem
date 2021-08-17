@@ -1,14 +1,12 @@
 package ru.iruchidesu.restaurantvotingsystem.service;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.iruchidesu.restaurantvotingsystem.RestaurantTestData;
+import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.model.Dish;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
 import ru.iruchidesu.restaurantvotingsystem.util.MenuUtil;
-import ru.iruchidesu.restaurantvotingsystem.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
@@ -37,15 +35,6 @@ public class MenuServiceTest extends AbstractServiceTest {
         newMenu.setRestaurant(restaurant2);
         MATCHER.assertMatch(created, newMenu);
         MATCHER.assertMatch(service.get(newId), newMenu);
-    }
-
-    @Test
-    void createWithNotNowDate() {
-        Assumptions.assumeTrue(false);
-        Menu newMenu = getNew();
-        //TODO что-то придумать с заменой даты
-        Menu created = service.create(MenuUtil.asTo(newMenu), RESTAURANT2_ID);
-        Assertions.assertNull(created);
     }
 
     @Test
@@ -121,7 +110,7 @@ public class MenuServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void createWithException() throws Exception {
+    void createWithException() {
         validateRootCause(ConstraintViolationException.class,
                 () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), null)), RESTAURANT1_ID));
         validateRootCause(ConstraintViolationException.class,

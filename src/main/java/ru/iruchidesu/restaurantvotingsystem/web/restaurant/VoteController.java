@@ -47,11 +47,11 @@ public class VoteController {
         return service.getTodayVoteByUser(SecurityUtil.authUserId());
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) {
+    public void delete() {
         log.info("delete today for user with id {}", SecurityUtil.authUserId());
-        service.delete(id, SecurityUtil.authUserId());
+        service.deleteToday(SecurityUtil.authUserId());
     }
 
     @GetMapping("/all")

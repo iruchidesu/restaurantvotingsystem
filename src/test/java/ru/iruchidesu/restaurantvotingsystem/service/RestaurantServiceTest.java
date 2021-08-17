@@ -2,8 +2,8 @@ package ru.iruchidesu.restaurantvotingsystem.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
-import ru.iruchidesu.restaurantvotingsystem.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
@@ -69,12 +69,12 @@ public class RestaurantServiceTest extends AbstractServiceTest {
 
     @Test
     void getWithMenu() {
-        List<Restaurant> restaurant = service.getWithMenu();
-        MATCHER_WITH_MENU.assertMatch(restaurant, List.of(restaurant1));
+        Restaurant restaurant = service.getWithMenu(RESTAURANT1_ID);
+        MATCHER_WITH_MENU.assertMatch(restaurant, restaurant1);
     }
 
     @Test
-    void createWithException() throws Exception {
+    void createWithException() {
         validateRootCause(ConstraintViolationException.class, () -> service.create(new Restaurant(null, "  ", "addressRest4")));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new Restaurant(null, "rest5", "  ")));
     }

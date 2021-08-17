@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "day"}, name = "restaurant_menu_idx")})
+@Table(name = "menu", uniqueConstraints = {@UniqueConstraint(columnNames = {"restaurant_id", "day"}, name = "menu_restaurant_date_idx")})
 public class Menu extends AbstractBaseEntity {
 
     @Column(name = "day", nullable = false, columnDefinition = "date default now()")

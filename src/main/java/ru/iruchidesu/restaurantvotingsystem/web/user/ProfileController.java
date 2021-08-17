@@ -21,9 +21,9 @@ import static ru.iruchidesu.restaurantvotingsystem.web.SecurityUtil.authUserId;
 public class ProfileController extends AbstractUserController {
     static final String REST_URL = "/rest/profile";
 
-    @PostMapping(value = "/sign-in", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> signIn(@Valid @RequestBody UserTo userTo) {
+    public ResponseEntity<User> signUp(@Valid @RequestBody UserTo userTo) {
         User created = super.create(UserUtil.createNewFromTo(userTo));
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -33,7 +33,7 @@ public class ProfileController extends AbstractUserController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody UserTo userTo) {
+    public void update(@Valid @RequestBody UserTo userTo) {
         super.update(userTo, authUserId());
     }
 

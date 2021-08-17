@@ -8,7 +8,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import ru.iruchidesu.restaurantvotingsystem.util.JsonDeserializers;
+import ru.iruchidesu.restaurantvotingsystem.util.json.JsonDeserializers;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -42,6 +42,7 @@ public class User extends AbstractNamedEntity {
 
     @Column(name = "registered", nullable = false, columnDefinition = "timestamp default now()")
     @NotNull
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date registered = new Date();
 
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)

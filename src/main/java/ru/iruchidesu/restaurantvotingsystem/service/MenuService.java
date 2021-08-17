@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.notFoundException;
 
 @Service
 public class MenuService {
@@ -31,18 +32,18 @@ public class MenuService {
     public Menu create(MenuTo menuTo, int restaurantId) {
         Assert.notNull(menuTo, "menu must not be null");
         Menu menu = new Menu(null, LocalDate.now(), menuTo.getDishes());
-        Restaurant restaurant = restaurantRepository.get(restaurantId);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
         menu.setRestaurant(restaurant);
         return menuRepository.save(menu);
     }
 
     @CacheEvict(value = "menu", allEntries = true)
     public void deleteTodayMenu(int restaurantId) {
-        checkNotFoundWithId(menuRepository.deleteByDate(restaurantId, LocalDate.now()), restaurantId);
+        checkNotFoundWithId(menuRepository.delete(restaurantId, LocalDate.now()) != 0, restaurantId);
     }
 
     public Menu get(int id) {
-        return checkNotFoundWithId(menuRepository.get(id), id);
+        return menuRepository.findById(id).orElseThrow(notFoundException("menu with id = " + id));
     }
 
     @CacheEvict(value = "menu", allEntries = true)
@@ -50,17 +51,18 @@ public class MenuService {
     public void update(MenuTo menuTo, int restaurantId) {
         Assert.notNull(menuTo, "menu must not be null");
         Menu menu = getTodayMenu(restaurantId);
-        Restaurant restaurant = restaurantRepository.get(restaurantId);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
         menu.setRestaurant(restaurant);
         menu.setDishes(menuTo.getDishes());
     }
 
     @Cacheable(value = "menu", key = "#restaurantId + '_' + T(java.time.LocalDate).now().toString()")
     public Menu getTodayMenu(int restaurantId) {
-        return checkNotFoundWithId(menuRepository.getMenuByDate(restaurantId, LocalDate.now()), restaurantId);
+        return menuRepository.getMenuByRestaurantIdAndLocalDate(restaurantId, LocalDate.now())
+                .orElseThrow(notFoundException("menu with restaurantId = " + restaurantId));
     }
 
     public List<Menu> getHistoryMenu(int restaurantId) {
-        return menuRepository.getMenusByRestaurant(restaurantId);
+        return menuRepository.getMenuByRestaurantIdOrderByLocalDateDesc(restaurantId);
     }
 }

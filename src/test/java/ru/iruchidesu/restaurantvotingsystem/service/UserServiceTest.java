@@ -4,9 +4,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import ru.iruchidesu.restaurantvotingsystem.UserTestData;
+import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.model.Role;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
-import ru.iruchidesu.restaurantvotingsystem.util.exception.NotFoundException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -70,7 +70,7 @@ public class UserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    void createWithException() throws Exception {
+    void createWithException() {
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "  ", "mail@yandex.ru", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "  ", "password", Role.USER)));
         validateRootCause(ConstraintViolationException.class, () -> service.create(new User(null, "User", "mail@yandex.ru", "  ", Role.USER)));

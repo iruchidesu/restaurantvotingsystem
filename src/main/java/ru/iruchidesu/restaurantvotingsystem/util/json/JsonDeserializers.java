@@ -1,10 +1,11 @@
-package ru.iruchidesu.restaurantvotingsystem.util;
+package ru.iruchidesu.restaurantvotingsystem.util.json;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import ru.iruchidesu.restaurantvotingsystem.util.UserUtil;
 
 import java.io.IOException;
 

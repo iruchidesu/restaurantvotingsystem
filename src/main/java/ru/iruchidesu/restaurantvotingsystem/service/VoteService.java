@@ -2,20 +2,19 @@ package ru.iruchidesu.restaurantvotingsystem.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import ru.iruchidesu.restaurantvotingsystem.error.VoteUpdateTimeException;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import ru.iruchidesu.restaurantvotingsystem.repository.RestaurantRepository;
 import ru.iruchidesu.restaurantvotingsystem.repository.UserRepository;
 import ru.iruchidesu.restaurantvotingsystem.repository.VoteRepository;
-import ru.iruchidesu.restaurantvotingsystem.util.exception.VoteUpdateTimeException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.notFoundException;
 
 @Service
 public class VoteService {
@@ -33,20 +32,25 @@ public class VoteService {
 
     @Transactional
     public Vote create(int restaurantId, int userId) {
-        Restaurant restaurant = restaurantRepository.get(restaurantId);
-        User user = userRepository.get(userId);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundException("restaurant with id = " + restaurantId));
+        User user = userRepository.findById(userId).orElseThrow(notFoundException("user with id = " + userId));
         Vote vote = new Vote();
         vote.setRestaurant(restaurant);
         vote.setUser(user);
-        return voteRepository.save(vote, userId);
+        if (!vote.isNew() && vote.getUser().id() != userId) {
+            return null;
+        }
+        return voteRepository.save(vote);
     }
 
-    public void delete(int id, int userId) {
-        checkNotFoundWithId(voteRepository.deleteByDate(userId, LocalDate.now()), id);
+    public void deleteToday(int userId) {
+        if (voteRepository.delete(userId, LocalDate.now()) == 0) {
+            notFoundException("vote with userId = " + userId).get();
+        }
     }
 
     public Vote get(int id) {
-        return checkNotFoundWithId(voteRepository.get(id), id);
+        return voteRepository.findById(id).orElseThrow(notFoundException("vote with id = " + id));
     }
 
     @Transactional
@@ -55,18 +59,18 @@ public class VoteService {
             throw new VoteUpdateTimeException("it's too late to change your vote");
         }
         Vote vote = getTodayVoteByUser(userId);
-        Assert.notNull(vote, "Today vote not found");
-        User user = userRepository.get(userId);
+        User user = userRepository.findById(userId).orElse(null);
         vote.setUser(user);
-        Restaurant restaurant = restaurantRepository.get(restaurantId);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundException("restaurant with id = " + restaurantId));
         vote.setRestaurant(restaurant);
     }
 
     public List<Vote> getAllVoteByUser(int userId) {
-        return voteRepository.getAllVoteByUser(userId);
+        return voteRepository.getVoteByUserIdOrderByVotingDateDesc(userId);
     }
 
     public Vote getTodayVoteByUser(int userId) {
-        return voteRepository.getTodayVoteUserById(userId);
+        return voteRepository.getVoteByUserIdAndVotingDate(userId, LocalDate.now())
+                .orElseThrow(notFoundException("vote with userId = " + userId));
     }
 }

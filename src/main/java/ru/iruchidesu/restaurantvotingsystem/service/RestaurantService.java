@@ -3,6 +3,7 @@ package ru.iruchidesu.restaurantvotingsystem.service;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
@@ -11,8 +12,8 @@ import ru.iruchidesu.restaurantvotingsystem.repository.RestaurantRepository;
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFound;
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.notFoundException;
 
 @Service
 public class RestaurantService {
@@ -35,21 +36,21 @@ public class RestaurantService {
             }
     )
     public void delete(int id) {
-        checkNotFoundWithId(repository.delete(id), id);
+        checkNotFoundWithId(repository.delete(id) != 0, id);
     }
 
     public Restaurant get(int id) {
-        return checkNotFoundWithId(repository.get(id), id);
+        return repository.findById(id).orElseThrow(notFoundException("restaurant with id = " + id));
     }
 
     public Restaurant getByName(String name) {
         Assert.notNull(name, "name must not be null");
-        return checkNotFound(repository.getByName(name), "name=" + name);
+        return repository.getByName(name).orElseThrow(notFoundException("restaurant with name = " + name));
     }
 
     @Cacheable("restaurant")
     public List<Restaurant> getAll() {
-        return repository.getAll();
+        return repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
     @CacheEvict(value = "restaurant", allEntries = true)
@@ -58,7 +59,7 @@ public class RestaurantService {
         checkNotFoundWithId(repository.save(restaurant), restaurant.id());
     }
 
-    public List<Restaurant> getWithMenu() {
-        return repository.getWithMenu(LocalDate.now());
+    public Restaurant getWithMenu(int id) {
+        return repository.getWithTodayMenu(id, LocalDate.now()).orElseThrow(notFoundException("restaurant with id = " + id));
     }
 }

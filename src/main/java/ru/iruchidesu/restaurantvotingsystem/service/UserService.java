@@ -1,8 +1,10 @@
 package ru.iruchidesu.restaurantvotingsystem.service;
 
-import org.springframework.cache.annotation.CacheEvict;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,16 @@ import ru.iruchidesu.restaurantvotingsystem.to.UserTo;
 import ru.iruchidesu.restaurantvotingsystem.util.UserUtil;
 
 import java.util.List;
+import java.util.Optional;
 
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFound;
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.*;
 
 @Service("userService")
 @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserService implements UserDetailsService {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
+
     private final UserRepository repository;
 
     public UserService(UserRepository repository) {
@@ -30,15 +35,15 @@ public class UserService implements UserDetailsService {
 
     public User create(User user) {
         Assert.notNull(user, "user must not be null");
-        return repository.save(user);
+        return prepareAndSave(user);
     }
 
     public void delete(int id) {
-        checkNotFoundWithId(repository.delete(id), id);
+        checkNotFoundWithId(repository.delete(id) != 0, id);
     }
 
     public User get(int id) {
-        return checkNotFoundWithId(repository.get(id), id);
+        return repository.findById(id).orElseThrow(notFoundException("user with id = " + id));
     }
 
     public User getByEmail(String email) {
@@ -46,29 +51,31 @@ public class UserService implements UserDetailsService {
         return checkNotFound(repository.getByEmail(email).orElse(null), "email=" + email);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     public void update(User user) {
         Assert.notNull(user, "user must not be null");
-        repository.save(user);
+        prepareAndSave(user);
     }
 
-    @CacheEvict(value = "users", allEntries = true)
     @Transactional
     public void update(UserTo userTo) {
         User user = get(userTo.id());
         User updatedUser = UserUtil.updateFromTo(user, userTo);
+        prepareAndSave(updatedUser);
     }
 
     @Override
     public AuthorizedUser loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = repository.getByEmail(email.toLowerCase()).orElse(null);
-        if (user == null) {
-            throw new UsernameNotFoundException("User " + email + " is not found");
-        }
-        return new AuthorizedUser(user);
+        log.debug("Authenticating '{}'", email);
+        Optional<User> optionalUser = repository.getByEmail(email);
+        return new AuthorizedUser(optionalUser.orElseThrow(
+                () -> new UsernameNotFoundException("User '" + email + "' was not found")));
     }
 
     public List<User> getAll() {
-        return repository.getAll();
+        return repository.findAll(Sort.by(Sort.Direction.ASC, "name", "email"));
+    }
+
+    protected User prepareAndSave(User user) {
+        return repository.save(UserUtil.prepareToSave(user));
     }
 }

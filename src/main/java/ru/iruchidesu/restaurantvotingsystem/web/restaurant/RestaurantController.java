@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 import ru.iruchidesu.restaurantvotingsystem.service.RestaurantService;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -33,7 +34,7 @@ public class RestaurantController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Restaurant> create(@RequestBody Restaurant restaurant) {
+    public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
         checkNew(restaurant);
         Restaurant created = service.create(restaurant);
@@ -46,7 +47,7 @@ public class RestaurantController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("ROLE_ADMIN")
-    public void update(@RequestBody Restaurant restaurant, @PathVariable int id) {
+    public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update {}", restaurant);
         assureIdConsistent(restaurant, id);
         service.update(restaurant);
@@ -65,7 +66,7 @@ public class RestaurantController {
     }
 
     @GetMapping("/by")
-    public Restaurant getByName(String name) {
+    public Restaurant getByName(@RequestParam String name) {
         log.info("getByName {}", name);
         return service.getByName(name);
     }
@@ -78,9 +79,9 @@ public class RestaurantController {
         service.delete(id);
     }
 
-    @GetMapping("/with-today-menu")
-    public List<Restaurant> getWithMenu() {
-        log.info("get with today menu");
-        return service.getWithMenu();
+    @GetMapping("/{id}/with-today-menu")
+    public Restaurant getWithMenu(@PathVariable int id) {
+        log.info("get id {} with today menu", id);
+        return service.getWithMenu(id);
     }
 }

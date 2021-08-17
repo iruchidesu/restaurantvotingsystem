@@ -13,6 +13,7 @@ import ru.iruchidesu.restaurantvotingsystem.service.MenuService;
 import ru.iruchidesu.restaurantvotingsystem.to.MenuTo;
 import ru.iruchidesu.restaurantvotingsystem.util.MenuUtil;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class MenuController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured("ROLE_ADMIN")
-    public ResponseEntity<Menu> create(@RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
+    public ResponseEntity<Menu> create(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("create for restaurant with id {}", restaurantId);
         Menu created = service.create(menuTo, restaurantId);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -44,7 +45,7 @@ public class MenuController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Secured("ROLE_ADMIN")
-    public void update(@RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
+    public void update(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("update for restaurant with id {}", restaurantId);
         service.update(menuTo, restaurantId);
     }
