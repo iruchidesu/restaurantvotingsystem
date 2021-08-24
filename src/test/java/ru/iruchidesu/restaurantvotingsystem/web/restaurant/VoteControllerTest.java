@@ -1,7 +1,8 @@
 package ru.iruchidesu.restaurantvotingsystem.web.restaurant;
 
-import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -9,16 +10,14 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.iruchidesu.restaurantvotingsystem.FixedClock;
 import ru.iruchidesu.restaurantvotingsystem.RestaurantTestData;
-import ru.iruchidesu.restaurantvotingsystem.VoteTestData;
 import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import ru.iruchidesu.restaurantvotingsystem.service.VoteService;
 import ru.iruchidesu.restaurantvotingsystem.util.json.JsonUtil;
 import ru.iruchidesu.restaurantvotingsystem.web.AbstractControllerTest;
 import ru.iruchidesu.restaurantvotingsystem.web.GlobalExceptionHandler;
-
-import java.time.LocalTime;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -31,6 +30,9 @@ import static ru.iruchidesu.restaurantvotingsystem.UserTestData.ADMIN_MAIL;
 import static ru.iruchidesu.restaurantvotingsystem.UserTestData.USER_MAIL;
 import static ru.iruchidesu.restaurantvotingsystem.VoteTestData.*;
 
+@ExtendWith(MockitoExtension.class)
+// https://dzone.com/articles/mockbean-spring-boots-missing-ingredient
+@FixedClock
 class VoteControllerTest extends AbstractControllerTest {
 
     private static final String REST_URL = VoteController.REST_URL + '/';
@@ -41,7 +43,7 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void create() throws Exception {
-        Vote newVote = VoteTestData.getNew();
+        Vote newVote = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT2_ID)))
                 .andExpect(status().isOk());
@@ -57,8 +59,6 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void update() throws Exception {
-        //TODO что-то придумать с заменой даты
-        Assumptions.assumeTrue(LocalTime.now().isBefore(LocalTime.of(11, 0)));
         Vote updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT2_ID))
@@ -71,9 +71,8 @@ class VoteControllerTest extends AbstractControllerTest {
 
     @Test
     @WithUserDetails(value = USER_MAIL)
+    @FixedClock("2021-08-17T12:03:00Z")
     void updateForbiddenTime() throws Exception {
-        //TODO что-то придумать с заменой даты
-        Assumptions.assumeTrue(LocalTime.now().isBefore(LocalTime.of(11, 0)));
         perform(MockMvcRequestBuilders.put(REST_URL)
                 .param("restaurantId", String.valueOf(RESTAURANT2_ID)))
                 .andExpect(status().isUnprocessableEntity())
@@ -137,8 +136,6 @@ class VoteControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void updateInvalid() throws Exception {
-        //TODO что-то придумать с заменой даты
-        Assumptions.assumeTrue(LocalTime.now().isBefore(LocalTime.of(11, 0)));
         perform(MockMvcRequestBuilders.put(REST_URL)
                 .param("restaurantId", String.valueOf(RestaurantTestData.NOT_FOUND)))
                 .andExpect(status().isUnprocessableEntity());

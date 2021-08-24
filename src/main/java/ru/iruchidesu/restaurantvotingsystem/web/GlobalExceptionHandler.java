@@ -8,19 +8,24 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.iruchidesu.restaurantvotingsystem.error.AppException;
+import ru.iruchidesu.restaurantvotingsystem.error.IllegalRequestDataException;
 import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.error.VoteUpdateTimeException;
 import ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -34,6 +39,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public static final String EXCEPTION_DUPLICATE_DISH = "Duplicate dish names in this menu";
     public static final String EXCEPTION_DUPLICATE_VOTE = "Today's vote for this user already exists";
     public static final String EXCEPTION_UPDATE_VOTE = "It is too late to change your vote";
+    public static final String EXCEPTION_ILLEGAL_ARGUMENT = "Illegal argument";
 
     private static final Map<String, String> CONSTRAINS_MAP = Map.of(
             "users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL,
@@ -72,6 +78,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<?> persistException(WebRequest request, NotFoundException ex) {
         log.error("NotFoundException ", ex);
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), ex.getMessage()),
@@ -79,6 +86,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(VoteUpdateTimeException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<?> handleError(WebRequest request, VoteUpdateTimeException ex) {
         log.error("VoteUpdateTimeException ", ex);
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), EXCEPTION_UPDATE_VOTE),
@@ -86,6 +94,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<?> conflict(WebRequest request, DataIntegrityViolationException ex) {
         log.error("DataIntegrityViolationException ", ex);
         String rootMsg = ValidationUtil.getRootCause(ex).getMessage();
@@ -99,6 +108,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             }
         }
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), null),
+                HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(IllegalRequestDataException.class)
+    public ResponseEntity<?> illegalRequestDataError(WebRequest request, IllegalRequestDataException ex) {
+        log.error("IllegalRequestDataException ", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), ex.getMessage()),
+                HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<?> IllegalArgumentError(WebRequest request, IllegalArgumentException ex) {
+        log.error("IllegalArgumentException ", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), EXCEPTION_ILLEGAL_ARGUMENT),
                 HttpStatus.UNPROCESSABLE_ENTITY);
     }
 

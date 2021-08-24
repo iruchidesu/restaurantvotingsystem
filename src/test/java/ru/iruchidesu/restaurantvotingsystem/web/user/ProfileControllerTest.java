@@ -8,7 +8,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.iruchidesu.restaurantvotingsystem.UserTestData;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
 import ru.iruchidesu.restaurantvotingsystem.service.UserService;
 import ru.iruchidesu.restaurantvotingsystem.to.UserTo;
@@ -66,7 +65,7 @@ class ProfileControllerTest extends AbstractControllerTest {
 
     @Test
     void signUp() throws Exception {
-        User newUser = UserTestData.getNew();
+        User newUser = getNew();
         newUser.setEnabled(true);
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -110,7 +109,7 @@ class ProfileControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updatedTo)))
                 .andDo(print())
-                .andExpect(status().isConflict())
+                .andExpect(status().isUnprocessableEntity())
                 .andExpect(content().string(containsString(GlobalExceptionHandler.EXCEPTION_DUPLICATE_EMAIL)));
     }
 }

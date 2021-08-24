@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Transactional(readOnly = true)
@@ -18,10 +19,10 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
     @Query("DELETE FROM Restaurant r WHERE r.id=:id")
     int delete(@Param("id") int id);
 
-    Optional<Restaurant> getByName(String name);
+    Optional<Restaurant> getByNameContainingIgnoreCaseOrderByNameAsc(String name);
 
     //    https://stackoverflow.com/a/46013654/548473
     @EntityGraph(attributePaths = {"menus"}, type = EntityGraph.EntityGraphType.LOAD)
-    @Query("SELECT r FROM Restaurant r LEFT OUTER JOIN r.menus m WHERE r.id=?1 AND m.localDate=?2")
-    Optional<Restaurant> getWithTodayMenu(int id, LocalDate dt);
+    @Query("SELECT r FROM Restaurant r LEFT OUTER JOIN r.menus m WHERE m.localDate=?1")
+    Optional<List<Restaurant>> getWithTodayMenu(LocalDate dt);
 }

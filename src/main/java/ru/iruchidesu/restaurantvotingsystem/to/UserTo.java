@@ -1,6 +1,6 @@
 package ru.iruchidesu.restaurantvotingsystem.to;
 
-import ru.iruchidesu.restaurantvotingsystem.HasId;
+import ru.iruchidesu.restaurantvotingsystem.HasIdAndEmail;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import java.io.Serial;
 import java.io.Serializable;
 
-public class UserTo implements HasId, Serializable {
+public class UserTo implements HasIdAndEmail, Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

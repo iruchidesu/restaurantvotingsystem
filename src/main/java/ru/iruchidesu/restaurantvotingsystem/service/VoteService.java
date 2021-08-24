@@ -43,7 +43,10 @@ public class VoteService {
         return voteRepository.save(vote);
     }
 
-    public void deleteToday(int userId) {
+    public void deleteToday(int userId, LocalTime time) {
+        if (time.isAfter(VOTE_UPDATE_TIME)) {
+            throw new VoteUpdateTimeException("it's too late to change your vote");
+        }
         if (voteRepository.delete(userId, LocalDate.now()) == 0) {
             notFoundException("vote with userId = " + userId).get();
         }

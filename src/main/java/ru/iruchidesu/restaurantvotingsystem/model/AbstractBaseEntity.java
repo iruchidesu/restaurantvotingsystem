@@ -1,5 +1,6 @@
 package ru.iruchidesu.restaurantvotingsystem.model;
 
+import org.springframework.data.domain.Persistable;
 import ru.iruchidesu.restaurantvotingsystem.HasId;
 
 import javax.persistence.*;
@@ -7,7 +8,7 @@ import javax.persistence.*;
 @MappedSuperclass
 // http://stackoverflow.com/questions/594597/hibernate-annotations-which-is-better-field-or-property-access
 @Access(AccessType.FIELD)
-public abstract class AbstractBaseEntity implements HasId {
+public abstract class AbstractBaseEntity implements Persistable<Integer>, HasId {
     public static final int START_SEQ = 100000;
 
     @Id
@@ -28,6 +29,16 @@ public abstract class AbstractBaseEntity implements HasId {
 
     public Integer getId() {
         return id;
+    }
+
+    @Override
+    public boolean isNew() {
+        return id == null;
+    }
+
+    @Override
+    public int id() {
+        return HasId.super.id();
     }
 
     @Override

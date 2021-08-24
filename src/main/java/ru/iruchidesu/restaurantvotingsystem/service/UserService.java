@@ -63,6 +63,13 @@ public class UserService implements UserDetailsService {
         prepareAndSave(updatedUser);
     }
 
+    @Transactional
+    public void enable(int id, boolean enabled) {
+        log.info(enabled ? "enable {}" : "disable {}", id);
+        User user = repository.findById(id).orElseThrow(notFoundException("user with id = " + id));
+        user.setEnabled(enabled);
+    }
+
     @Override
     public AuthorizedUser loadUserByUsername(String email) throws UsernameNotFoundException {
         log.debug("Authenticating '{}'", email);

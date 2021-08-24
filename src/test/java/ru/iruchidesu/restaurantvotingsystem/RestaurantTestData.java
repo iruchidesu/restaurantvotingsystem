@@ -12,10 +12,10 @@ public class RestaurantTestData {
     public static final MatcherFactory.Matcher<Restaurant> MATCHER = MatcherFactory.usingEqualsComparator(Restaurant.class);
     public static final MatcherFactory.Matcher<Restaurant> MATCHER_WITH_MENU = MatcherFactory.usingAssertions(Restaurant.class,
             (a, e) -> {
-                assertThat(a).isEqualTo(e);
+                throw new UnsupportedOperationException();
             },
             (a, e) -> {
-                throw new UnsupportedOperationException();
+                assertThat(a).isEqualTo(e);
             });
 
     public static final int RESTAURANT1_ID = START_SEQ + 2;

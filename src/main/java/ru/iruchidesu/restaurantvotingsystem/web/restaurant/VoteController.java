@@ -1,5 +1,7 @@
 package ru.iruchidesu.restaurantvotingsystem.web.restaurant;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -10,11 +12,13 @@ import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import ru.iruchidesu.restaurantvotingsystem.service.VoteService;
 import ru.iruchidesu.restaurantvotingsystem.web.SecurityUtil;
 
+import java.time.Clock;
 import java.time.LocalTime;
 import java.util.List;
 
 @RestController
 @RequestMapping(value = VoteController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+@Tag(name = "Vote Controller")
 public class VoteController {
 
     static final String REST_URL = "/rest/profile/vote";
@@ -23,11 +27,15 @@ public class VoteController {
 
     private final VoteService service;
 
-    public VoteController(VoteService service) {
+    private final Clock clock;
+
+    public VoteController(VoteService service, Clock clock) {
         this.service = service;
+        this.clock = clock;
     }
 
     @PostMapping
+    @Operation(summary = "Vote for restaurant")
     public ResponseEntity<Vote> create(@RequestParam int restaurantId) {
         log.info("create with restaurantId {} by user with id {}", restaurantId, SecurityUtil.authUserId());
         Vote created = service.create(restaurantId, SecurityUtil.authUserId());
@@ -36,25 +44,29 @@ public class VoteController {
 
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Update vote")
     public void update(@RequestParam int restaurantId) {
         log.info("update (new restaurantId {}) by user with id {}", restaurantId, SecurityUtil.authUserId());
-        service.update(restaurantId, LocalTime.now(), SecurityUtil.authUserId());
+        service.update(restaurantId, LocalTime.now(clock), SecurityUtil.authUserId());
     }
 
     @GetMapping
+    @Operation(summary = "Get today's vote for auth user")
     public Vote get() {
-        log.info("get today for user with id {}", SecurityUtil.authUserId());
+        log.info("get today's for user with id {}", SecurityUtil.authUserId());
         return service.getTodayVoteByUser(SecurityUtil.authUserId());
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete today's vote")
     public void delete() {
-        log.info("delete today for user with id {}", SecurityUtil.authUserId());
-        service.deleteToday(SecurityUtil.authUserId());
+        log.info("delete today's for user with id {}", SecurityUtil.authUserId());
+        service.deleteToday(SecurityUtil.authUserId(), LocalTime.now(clock));
     }
 
     @GetMapping("/all")
+    @Operation(summary = "Get all votes for auth user")
     public List<Vote> getAllVoteByUser() {
         log.info("get all for user with id {}", SecurityUtil.authUserId());
         return service.getAllVoteByUser(SecurityUtil.authUserId());

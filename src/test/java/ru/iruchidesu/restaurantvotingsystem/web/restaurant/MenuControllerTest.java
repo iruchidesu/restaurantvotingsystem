@@ -8,7 +8,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import ru.iruchidesu.restaurantvotingsystem.MenuTestData;
 import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.model.Dish;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
@@ -40,7 +39,7 @@ class MenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = ADMIN_MAIL)
     void create() throws Exception {
-        Menu newMenu = MenuTestData.getNew();
+        Menu newMenu = getNew();
         ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT2_ID + "/menu")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(MenuUtil.asTo(newMenu))))
@@ -108,7 +107,7 @@ class MenuControllerTest extends AbstractControllerTest {
     @Test
     @WithUserDetails(value = USER_MAIL)
     void createForbidden() throws Exception {
-        Menu newMenu = MenuTestData.getNew();
+        Menu newMenu = getNew();
         perform(MockMvcRequestBuilders.post(REST_URL + RESTAURANT2_ID + "/menu")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(MenuUtil.asTo(newMenu))))

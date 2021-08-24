@@ -40,13 +40,20 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void deleteToday() {
-        service.deleteToday(USER_ID);
+        service.deleteToday(USER_ID, BEFORE_FORBIDDEN_TIME);
         assertThrows(NotFoundException.class, () -> service.get(VOTE_TODAY1_ID));
     }
 
     @Test
     void deleteTodayNotFound() {
-        assertThrows(NotFoundException.class, () -> service.deleteToday(ADMIN_ID));
+        assertThrows(NotFoundException.class, () -> service.deleteToday(ADMIN_ID, BEFORE_FORBIDDEN_TIME));
+    }
+
+    @Test
+    void deleteTodayForbiddenTime() {
+        VoteUpdateTimeException exception = assertThrows(VoteUpdateTimeException.class,
+                () -> service.deleteToday(USER_ID, AFTER_FORBIDDEN_TIME));
+        Assertions.assertEquals("it's too late to change your vote", exception.getMessage());
     }
 
     @Test

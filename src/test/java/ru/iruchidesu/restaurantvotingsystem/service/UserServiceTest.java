@@ -3,7 +3,6 @@ package ru.iruchidesu.restaurantvotingsystem.service;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import ru.iruchidesu.restaurantvotingsystem.UserTestData;
 import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.model.Role;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
@@ -48,7 +47,7 @@ public class UserServiceTest extends AbstractServiceTest {
     @Test
     void get() {
         User user = service.get(ADMIN_ID);
-        MATCHER.assertMatch(user, UserTestData.admin);
+        MATCHER.assertMatch(user, admin);
     }
 
     @Test

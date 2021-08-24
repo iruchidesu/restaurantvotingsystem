@@ -45,7 +45,7 @@ public class RestaurantService {
 
     public Restaurant getByName(String name) {
         Assert.notNull(name, "name must not be null");
-        return repository.getByName(name).orElseThrow(notFoundException("restaurant with name = " + name));
+        return repository.getByNameContainingIgnoreCaseOrderByNameAsc(name).orElseThrow(notFoundException("restaurant with name = " + name));
     }
 
     @Cacheable("restaurant")
@@ -59,7 +59,7 @@ public class RestaurantService {
         checkNotFoundWithId(repository.save(restaurant), restaurant.id());
     }
 
-    public Restaurant getWithMenu(int id) {
-        return repository.getWithTodayMenu(id, LocalDate.now()).orElseThrow(notFoundException("restaurant with id = " + id));
+    public List<Restaurant> getWithMenu() {
+        return repository.getWithTodayMenu(LocalDate.now()).orElse(List.of());
     }
 }

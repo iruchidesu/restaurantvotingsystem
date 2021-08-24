@@ -5,7 +5,6 @@ import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
-import java.util.List;
 
 import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant1;
 import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant2;
@@ -27,8 +26,6 @@ public class VoteTestData {
     public static final Vote vote1 = new Vote(VOTE_1_ID, LocalDate.of(2021, Month.JULY, 17));
     public static final Vote vote2 = new Vote(VOTE_2_ID, LocalDate.of(2021, Month.JULY, 18));
     public static final Vote voteToday1 = new Vote(VOTE_TODAY1_ID, LocalDate.now());
-
-    public static final List<Vote> all = List.of(voteToday1, vote2, vote1);
 
     static {
         vote1.setRestaurant(restaurant1);
