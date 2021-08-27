@@ -24,11 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.iruchidesu.restaurantvotingsystem.MenuTestData.*;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.RESTAURANT1_ID;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.RESTAURANT2_ID;
-import static ru.iruchidesu.restaurantvotingsystem.UserTestData.ADMIN_MAIL;
-import static ru.iruchidesu.restaurantvotingsystem.UserTestData.USER_MAIL;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.MenuTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.RESTAURANT1_ID;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.RESTAURANT2_ID;
+import static ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData.ADMIN_MAIL;
+import static ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData.USER_MAIL;
 
 class MenuControllerTest extends AbstractControllerTest {
     private static final String REST_URL = "/rest/restaurant/";

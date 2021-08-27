@@ -2,11 +2,11 @@ package ru.iruchidesu.restaurantvotingsystem.service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.iruchidesu.restaurantvotingsystem.RestaurantTestData;
 import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.model.Dish;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
 import ru.iruchidesu.restaurantvotingsystem.util.MenuUtil;
+import ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData;
 
 import javax.validation.ConstraintViolationException;
 import java.time.LocalDate;
@@ -14,12 +14,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.iruchidesu.restaurantvotingsystem.MenuTestData.MATCHER;
-import static ru.iruchidesu.restaurantvotingsystem.MenuTestData.NOT_FOUND;
-import static ru.iruchidesu.restaurantvotingsystem.MenuTestData.getNew;
-import static ru.iruchidesu.restaurantvotingsystem.MenuTestData.getUpdated;
-import static ru.iruchidesu.restaurantvotingsystem.MenuTestData.*;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.MenuTestData.MATCHER;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.MenuTestData.NOT_FOUND;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.MenuTestData.getNew;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.MenuTestData.getUpdated;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.MenuTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.*;
 
 public class MenuServiceTest extends AbstractServiceTest {
 
@@ -119,7 +119,7 @@ public class MenuServiceTest extends AbstractServiceTest {
                 () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), List.of(new Dish("dish10", 0)))), RESTAURANT1_ID));
         validateRootCause(ConstraintViolationException.class,
                 () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), List.of())), RESTAURANT1_ID));
-        validateRootCause(ConstraintViolationException.class,
+        validateRootCause(NotFoundException.class,
                 () -> service.create(MenuUtil.asTo(new Menu(null, LocalDate.now(), List.of(new Dish("dish10", 10)))), RestaurantTestData.NOT_FOUND));
     }
 }

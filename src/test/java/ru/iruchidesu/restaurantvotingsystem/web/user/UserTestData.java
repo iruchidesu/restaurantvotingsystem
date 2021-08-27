@@ -1,5 +1,6 @@
-package ru.iruchidesu.restaurantvotingsystem;
+package ru.iruchidesu.restaurantvotingsystem.web.user;
 
+import ru.iruchidesu.restaurantvotingsystem.MatcherFactory;
 import ru.iruchidesu.restaurantvotingsystem.model.Role;
 import ru.iruchidesu.restaurantvotingsystem.model.User;
 import ru.iruchidesu.restaurantvotingsystem.to.UserTo;

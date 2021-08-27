@@ -1,16 +1,17 @@
-package ru.iruchidesu.restaurantvotingsystem;
+package ru.iruchidesu.restaurantvotingsystem.web.restaurant;
 
+import ru.iruchidesu.restaurantvotingsystem.MatcherFactory;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Month;
 
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant1;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant2;
-import static ru.iruchidesu.restaurantvotingsystem.UserTestData.admin;
-import static ru.iruchidesu.restaurantvotingsystem.UserTestData.user;
 import static ru.iruchidesu.restaurantvotingsystem.model.AbstractBaseEntity.START_SEQ;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.restaurant1;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.restaurant2;
+import static ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData.admin;
+import static ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData.user;
 
 public class VoteTestData {
     public static final MatcherFactory.Matcher<Vote> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Vote.class, "user", "restaurant.menus");

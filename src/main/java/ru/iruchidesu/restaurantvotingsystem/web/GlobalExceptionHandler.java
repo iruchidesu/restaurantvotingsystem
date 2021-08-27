@@ -8,7 +8,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.lang.NonNull;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.iruchidesu.restaurantvotingsystem.error.AppException;
 import ru.iruchidesu.restaurantvotingsystem.error.IllegalRequestDataException;
@@ -25,7 +23,6 @@ import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.error.VoteUpdateTimeException;
 import ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -119,7 +116,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<?> IllegalArgumentError(WebRequest request, IllegalArgumentException ex) {
+    public ResponseEntity<?> illegalArgumentError(WebRequest request, IllegalArgumentException ex) {
         log.error("IllegalArgumentException ", ex);
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), EXCEPTION_ILLEGAL_ARGUMENT),
                 HttpStatus.UNPROCESSABLE_ENTITY);

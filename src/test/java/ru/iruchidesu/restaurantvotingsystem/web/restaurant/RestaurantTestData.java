@@ -1,12 +1,13 @@
-package ru.iruchidesu.restaurantvotingsystem;
+package ru.iruchidesu.restaurantvotingsystem.web.restaurant;
 
+import ru.iruchidesu.restaurantvotingsystem.MatcherFactory;
 import ru.iruchidesu.restaurantvotingsystem.model.Restaurant;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static ru.iruchidesu.restaurantvotingsystem.MenuTestData.menuTodayR1;
 import static ru.iruchidesu.restaurantvotingsystem.model.AbstractBaseEntity.START_SEQ;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.MenuTestData.menuTodayR1;
 
 public class RestaurantTestData {
     public static final MatcherFactory.Matcher<Restaurant> MATCHER = MatcherFactory.usingEqualsComparator(Restaurant.class);
@@ -14,9 +15,7 @@ public class RestaurantTestData {
             (a, e) -> {
                 throw new UnsupportedOperationException();
             },
-            (a, e) -> {
-                assertThat(a).isEqualTo(e);
-            });
+            (a, e) -> assertThat(a).isEqualTo(e));
 
     public static final int RESTAURANT1_ID = START_SEQ + 2;
     public static final int RESTAURANT2_ID = START_SEQ + 3;

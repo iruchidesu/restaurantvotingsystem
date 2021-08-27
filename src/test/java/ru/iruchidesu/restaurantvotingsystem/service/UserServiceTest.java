@@ -10,7 +10,7 @@ import ru.iruchidesu.restaurantvotingsystem.model.User;
 import javax.validation.ConstraintViolationException;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.iruchidesu.restaurantvotingsystem.UserTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData.*;
 
 public class UserServiceTest extends AbstractServiceTest {
 

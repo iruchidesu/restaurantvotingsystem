@@ -11,7 +11,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.iruchidesu.restaurantvotingsystem.FixedClock;
-import ru.iruchidesu.restaurantvotingsystem.RestaurantTestData;
 import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import ru.iruchidesu.restaurantvotingsystem.service.VoteService;
@@ -24,11 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.RESTAURANT2_ID;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant2;
-import static ru.iruchidesu.restaurantvotingsystem.UserTestData.ADMIN_MAIL;
-import static ru.iruchidesu.restaurantvotingsystem.UserTestData.USER_MAIL;
-import static ru.iruchidesu.restaurantvotingsystem.VoteTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.RESTAURANT2_ID;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.restaurant2;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.VoteTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData.ADMIN_MAIL;
+import static ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData.USER_MAIL;
 
 @ExtendWith(MockitoExtension.class)
 // https://dzone.com/articles/mockbean-spring-boots-missing-ingredient

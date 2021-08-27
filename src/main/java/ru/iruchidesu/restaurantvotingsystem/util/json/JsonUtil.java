@@ -13,6 +13,9 @@ public class JsonUtil {
 
     private static ObjectMapper mapper;
 
+    private JsonUtil() {
+    }
+
     public static void setMapper(ObjectMapper mapper) {
         JsonUtil.mapper = mapper;
     }

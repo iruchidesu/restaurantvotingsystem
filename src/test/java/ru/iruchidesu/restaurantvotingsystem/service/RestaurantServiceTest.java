@@ -9,7 +9,7 @@ import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.*;
 
 public class RestaurantServiceTest extends AbstractServiceTest {
 

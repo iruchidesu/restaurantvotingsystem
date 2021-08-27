@@ -32,7 +32,7 @@ public class MenuService {
     public Menu create(MenuTo menuTo, int restaurantId) {
         Assert.notNull(menuTo, "menu must not be null");
         Menu menu = new Menu(null, LocalDate.now(), menuTo.getDishes());
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundException("restaurant with id = " + restaurantId));
         menu.setRestaurant(restaurant);
         return menuRepository.save(menu);
     }
@@ -51,7 +51,7 @@ public class MenuService {
     public void update(MenuTo menuTo, int restaurantId) {
         Assert.notNull(menuTo, "menu must not be null");
         Menu menu = getTodayMenu(restaurantId);
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElse(null);
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundException("restaurant with id = " + restaurantId));
         menu.setRestaurant(restaurant);
         menu.setDishes(menuTo.getDishes());
     }

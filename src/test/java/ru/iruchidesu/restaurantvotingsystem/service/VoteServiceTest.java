@@ -3,23 +3,23 @@ package ru.iruchidesu.restaurantvotingsystem.service;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import ru.iruchidesu.restaurantvotingsystem.RestaurantTestData;
-import ru.iruchidesu.restaurantvotingsystem.UserTestData;
 import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.error.VoteUpdateTimeException;
 import ru.iruchidesu.restaurantvotingsystem.model.Vote;
+import ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData;
+import ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.RESTAURANT2_ID;
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant2;
-import static ru.iruchidesu.restaurantvotingsystem.UserTestData.*;
-import static ru.iruchidesu.restaurantvotingsystem.VoteTestData.MATCHER;
-import static ru.iruchidesu.restaurantvotingsystem.VoteTestData.NOT_FOUND;
-import static ru.iruchidesu.restaurantvotingsystem.VoteTestData.getNew;
-import static ru.iruchidesu.restaurantvotingsystem.VoteTestData.getUpdated;
-import static ru.iruchidesu.restaurantvotingsystem.VoteTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.RESTAURANT2_ID;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.restaurant2;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.VoteTestData.MATCHER;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.VoteTestData.NOT_FOUND;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.VoteTestData.getNew;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.VoteTestData.getUpdated;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.VoteTestData.*;
+import static ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData.*;
 
 public class VoteServiceTest extends AbstractServiceTest {
 

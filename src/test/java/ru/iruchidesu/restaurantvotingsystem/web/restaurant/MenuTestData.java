@@ -1,5 +1,6 @@
-package ru.iruchidesu.restaurantvotingsystem;
+package ru.iruchidesu.restaurantvotingsystem.web.restaurant;
 
+import ru.iruchidesu.restaurantvotingsystem.MatcherFactory;
 import ru.iruchidesu.restaurantvotingsystem.model.Dish;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
 import ru.iruchidesu.restaurantvotingsystem.to.MenuTo;
@@ -8,8 +9,8 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
 
-import static ru.iruchidesu.restaurantvotingsystem.RestaurantTestData.restaurant1;
 import static ru.iruchidesu.restaurantvotingsystem.model.AbstractBaseEntity.START_SEQ;
+import static ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData.restaurant1;
 
 public class MenuTestData {
     public static final MatcherFactory.Matcher<Menu> MATCHER = MatcherFactory.usingIgnoringFieldsComparator(Menu.class, "restaurant");
