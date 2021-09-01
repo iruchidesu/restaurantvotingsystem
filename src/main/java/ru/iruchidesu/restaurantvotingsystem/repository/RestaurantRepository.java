@@ -24,5 +24,5 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Integer>
     //    https://stackoverflow.com/a/46013654/548473
     @EntityGraph(attributePaths = {"menus"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("SELECT r FROM Restaurant r LEFT OUTER JOIN r.menus m WHERE m.localDate=?1")
-    Optional<List<Restaurant>> getWithTodayMenu(LocalDate dt);
+    List<Restaurant> getWithTodayMenu(LocalDate dt);
 }

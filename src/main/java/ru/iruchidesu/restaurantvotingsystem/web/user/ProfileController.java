@@ -24,7 +24,7 @@ import static ru.iruchidesu.restaurantvotingsystem.web.SecurityUtil.authUserId;
 public class ProfileController extends AbstractUserController {
     static final String REST_URL = "/rest/profile";
 
-    @PostMapping(value = "/sign-up", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Sign up new user")
     public ResponseEntity<User> signUp(@Valid @RequestBody UserTo userTo) {

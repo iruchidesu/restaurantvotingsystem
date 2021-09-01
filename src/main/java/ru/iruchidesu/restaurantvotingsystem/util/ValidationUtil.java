@@ -58,4 +58,10 @@ public class ValidationUtil {
             throw new NotFoundException("Not found " + msg);
         };
     }
+
+    public static Supplier<NotFoundException> notFoundRestaurantException(int id) {
+        return () -> {
+            throw new NotFoundException("Not found restaurant with id = " + id);
+        };
+    }
 }

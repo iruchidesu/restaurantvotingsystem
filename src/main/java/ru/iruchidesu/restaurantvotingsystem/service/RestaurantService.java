@@ -1,6 +1,7 @@
 package ru.iruchidesu.restaurantvotingsystem.service;
 
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Sort;
@@ -12,8 +13,7 @@ import ru.iruchidesu.restaurantvotingsystem.repository.RestaurantRepository;
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.notFoundException;
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.*;
 
 @Service
 public class RestaurantService {
@@ -31,8 +31,8 @@ public class RestaurantService {
 
     @Caching(
             evict = {
-                    @CacheEvict(value = "restaurant", allEntries = true),
-                    @CacheEvict(value = "menu", key = "#id + '_' + T(java.time.LocalDate).now().toString()")
+                    @CacheEvict(value = "restaurant", key = "#id"),
+                    @CacheEvict(value = "menu", allEntries = true)
             }
     )
     public void delete(int id) {
@@ -40,7 +40,7 @@ public class RestaurantService {
     }
 
     public Restaurant get(int id) {
-        return repository.findById(id).orElseThrow(notFoundException("restaurant with id = " + id));
+        return repository.findById(id).orElseThrow(notFoundRestaurantException(id));
     }
 
     public Restaurant getByName(String name) {
@@ -53,13 +53,13 @@ public class RestaurantService {
         return repository.findAll(Sort.by(Sort.Direction.ASC, "name"));
     }
 
-    @CacheEvict(value = "restaurant", allEntries = true)
+    @CachePut(value = "restaurant", key = "#restaurant.id")
     public void update(Restaurant restaurant) {
         Assert.notNull(restaurant, "restaurant must not be null");
         checkNotFoundWithId(repository.save(restaurant), restaurant.id());
     }
 
     public List<Restaurant> getWithMenu() {
-        return repository.getWithTodayMenu(LocalDate.now()).orElse(List.of());
+        return repository.getWithTodayMenu(LocalDate.now());
     }
 }

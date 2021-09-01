@@ -34,14 +34,19 @@ Each restaurant provides a new menu each day.
 * (/v3/api-docs/REST%20API)
 * (/swagger-ui.html)
 
+#### Preset users
+
+* Admin (Username: admin@gmail.com, password: admin)
+* User (Username: user@yandex.ru, password: password)
+
 #### Users
 
-* POST /rest/profile/sign-up (sign up a new user)
+* POST /rest/profile (sign up a new user)
 * GET /rest/profile (get user profile)
 * PUT /rest/profile (update user profile)
 * DELETE /rest/profile (delete user profile)
 
-#### Admins
+#### Users management
 
 * POST /rest/admin/users (register a new user)
 * GET /rest/admin/users (get all users)
@@ -53,31 +58,31 @@ Each restaurant provides a new menu each day.
 
 #### Restaurants
 
-* POST /rest/restaurant (create a new restaurant)
-* GET /rest/restaurant (get list of restaurants)
-* GET /rest/restaurant/with-today-menu (get list of restaurants with today's menu)
-* GET /rest/restaurant/{id} (get restaurant with id = id without today menu)
-* GET /rest/admin/users/by?name={name} (get restaurant with name = name)
-* PUT /rest/restaurant/{id} (update restaurant with id = id)
-* DELETE /rest/restaurant/{id} (delete restaurant with id = id)
+* POST /rest/restaurants (create a new restaurant)
+* GET /rest/restaurants (get list of restaurants)
+* GET /rest/restaurants/with-today-menu (get list of restaurants with today's menu)
+* GET /rest/restaurants/{id} (get restaurant with id = id without today menu)
+* GET /rest/restaurants/by?name={name} (get restaurant with name = name)
+* PUT /rest/restaurants/{id} (update restaurant with id = id)
+* DELETE /rest/restaurants/{id} (delete restaurant with id = id)
 
 #### Menus
 
-* POST /rest/restaurant/{restaurantId}/menu (create today's menu for restaurant with id = restaurantId)
-* GET /rest/restaurant/{restaurantId}/menu (get today's menu for restaurant with id = restaurantId)
-* GET /rest/restaurant/{restaurantId}/menu/history (get menus list history for restaurant with id = restaurantId)
-* PUT /rest/restaurant/{restaurantId}/menu (update today's menu for restaurant with id = restaurantId)
-* DELETE /rest/restaurant/{restaurantId}/menu (delete today's menu for restaurant with id = restaurantId)
+* POST /rest/restaurants/{restaurantId}/menus (create today's menu for restaurant with id = restaurantId)
+* GET /rest/restaurants/{restaurantId}/menus/by?date={date} (get menu on date for restaurant with id = restaurantId)
+* GET /rest/restaurants/{restaurantId}/menus (get menus list history for restaurant with id = restaurantId)
+* PUT /rest/restaurants/{restaurantId}/menus (update today's menu for restaurant with id = restaurantId)
+* DELETE /rest/restaurants/{restaurantId}/menus (delete today's menu for restaurant with id = restaurantId)
 
 #### Votes
 
-* POST /rest/profile/vote?restaurantId={restaurantId} (create vote from authorized user for restaurant with id =
+* POST /rest/profile/votes?restaurantId={restaurantId} (create vote from authorized user for restaurant with id =
   restaurantId)
-* PUT /rest/profile/vote?restaurantId={restaurantId} (update today's vote from authorized user for restaurant with id =
+* PUT /rest/profile/votes?restaurantId={restaurantId} (update today's vote from authorized user for restaurant with id =
   restaurantId)
-* GET /rest/profile/vote (get today's vote for authorized user)
-* GET /rest/profile/vote/all (get all vote for authorized user)
-* DELETE /rest/profile/vote (delete today's vote for authorized user)
+* GET /rest/profile/votes/by?date={date} (get vote for authorized user on date)
+* GET /rest/profile/votes (get all vote for authorized user)
+* DELETE /rest/profile/votes (delete today's vote for authorized user)
 
 ### Caching strategy
 

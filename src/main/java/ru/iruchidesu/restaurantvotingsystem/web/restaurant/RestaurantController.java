@@ -25,7 +25,7 @@ import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNew;
 @Tag(name = "Restaurant Controller")
 public class RestaurantController {
 
-    static final String REST_URL = "/rest/restaurant";
+    static final String REST_URL = "/rest/restaurants";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -36,7 +36,6 @@ public class RestaurantController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Secured("ROLE_ADMIN")
     @Operation(summary = "Create new restaurant (only admin)")
     public ResponseEntity<Restaurant> create(@Valid @RequestBody Restaurant restaurant) {
         log.info("create {}", restaurant);
@@ -50,7 +49,6 @@ public class RestaurantController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
     @Operation(summary = "Update restaurant (only admin)")
     public void update(@Valid @RequestBody Restaurant restaurant, @PathVariable int id) {
         log.info("update {}", restaurant);
@@ -81,7 +79,6 @@ public class RestaurantController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
     @Operation(summary = "Delete restaurant (only admin)")
     public void delete(@PathVariable int id) {
         log.info("delete {}", id);

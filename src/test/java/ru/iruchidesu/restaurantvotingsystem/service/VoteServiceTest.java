@@ -9,6 +9,8 @@ import ru.iruchidesu.restaurantvotingsystem.model.Vote;
 import ru.iruchidesu.restaurantvotingsystem.web.restaurant.RestaurantTestData;
 import ru.iruchidesu.restaurantvotingsystem.web.user.UserTestData;
 
+import java.sql.BatchUpdateException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -36,24 +38,6 @@ public class VoteServiceTest extends AbstractServiceTest {
         newVote.setUser(admin);
         MATCHER.assertMatch(created, newVote);
         MATCHER.assertMatch(service.get(newId), newVote);
-    }
-
-    @Test
-    void deleteToday() {
-        service.deleteToday(USER_ID, BEFORE_FORBIDDEN_TIME);
-        assertThrows(NotFoundException.class, () -> service.get(VOTE_TODAY1_ID));
-    }
-
-    @Test
-    void deleteTodayNotFound() {
-        assertThrows(NotFoundException.class, () -> service.deleteToday(ADMIN_ID, BEFORE_FORBIDDEN_TIME));
-    }
-
-    @Test
-    void deleteTodayForbiddenTime() {
-        VoteUpdateTimeException exception = assertThrows(VoteUpdateTimeException.class,
-                () -> service.deleteToday(USER_ID, AFTER_FORBIDDEN_TIME));
-        Assertions.assertEquals("it's too late to change your vote", exception.getMessage());
     }
 
     @Test
@@ -113,14 +97,14 @@ public class VoteServiceTest extends AbstractServiceTest {
 
     @Test
     void getTodayVoteByUser() {
-        MATCHER.assertMatch(service.getTodayVoteByUser(USER_ID), voteToday1);
+        MATCHER.assertMatch(service.getVoteByUser(USER_ID, LocalDate.now()), voteToday1);
     }
 
     @Test
     void createWithException() {
         validateRootCause(NotFoundException.class,
                 () -> service.create(RestaurantTestData.NOT_FOUND, ADMIN_ID));
-        validateRootCause(NotFoundException.class,
+        validateRootCause(BatchUpdateException.class,
                 () -> service.create(RESTAURANT2_ID, UserTestData.NOT_FOUND));
     }
 }

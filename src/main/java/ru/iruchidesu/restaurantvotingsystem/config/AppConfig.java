@@ -25,10 +25,4 @@ public class AppConfig {
     public void storeObjectMapper(ObjectMapper objectMapper) {
         JsonUtil.setMapper(objectMapper);
     }
-
-    @Bean
-    @Profile("test")
-    public CacheManager getNoOpCacheManager() {
-        return new NoOpCacheManager();
-    }
 }

@@ -14,8 +14,7 @@ import ru.iruchidesu.restaurantvotingsystem.to.MenuTo;
 import java.time.LocalDate;
 import java.util.List;
 
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.checkNotFoundWithId;
-import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.notFoundException;
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.*;
 
 @Service
 public class MenuService {
@@ -32,7 +31,7 @@ public class MenuService {
     public Menu create(MenuTo menuTo, int restaurantId) {
         Assert.notNull(menuTo, "menu must not be null");
         Menu menu = new Menu(null, LocalDate.now(), menuTo.getDishes());
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundException("restaurant with id = " + restaurantId));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundRestaurantException(restaurantId));
         menu.setRestaurant(restaurant);
         return menuRepository.save(menu);
     }
@@ -50,15 +49,15 @@ public class MenuService {
     @Transactional
     public void update(MenuTo menuTo, int restaurantId) {
         Assert.notNull(menuTo, "menu must not be null");
-        Menu menu = getTodayMenu(restaurantId);
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundException("restaurant with id = " + restaurantId));
+        Menu menu = getMenu(restaurantId, LocalDate.now());
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundRestaurantException(restaurantId));
         menu.setRestaurant(restaurant);
         menu.setDishes(menuTo.getDishes());
     }
 
-    @Cacheable(value = "menu", key = "#restaurantId + '_' + T(java.time.LocalDate).now().toString()")
-    public Menu getTodayMenu(int restaurantId) {
-        return menuRepository.getMenuByRestaurantIdAndLocalDate(restaurantId, LocalDate.now())
+    @Cacheable(value = "menu", key = "#restaurantId + '_' + #date.toString()")
+    public Menu getMenu(int restaurantId, LocalDate date) {
+        return menuRepository.getMenuByRestaurantIdAndLocalDate(restaurantId, date)
                 .orElseThrow(notFoundException("menu with restaurantId = " + restaurantId));
     }
 

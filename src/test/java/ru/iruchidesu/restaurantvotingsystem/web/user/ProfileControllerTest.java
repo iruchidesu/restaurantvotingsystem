@@ -67,7 +67,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     void signUp() throws Exception {
         User newUser = getNew();
         newUser.setEnabled(true);
-        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL + "/sign-up")
+        ResultActions action = perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(UserUtil.asTo(newUser))))
                 .andExpect(status().isCreated());
@@ -82,7 +82,7 @@ class ProfileControllerTest extends AbstractControllerTest {
     @Test
     void signUpInvalid() throws Exception {
         UserTo newTo = new UserTo(null, null, null, null);
-        perform(MockMvcRequestBuilders.post(REST_URL + "/sign-up")
+        perform(MockMvcRequestBuilders.post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(newTo)))
                 .andDo(print())

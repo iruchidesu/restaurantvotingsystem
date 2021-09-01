@@ -4,10 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.iruchidesu.restaurantvotingsystem.model.Menu;
@@ -17,6 +17,7 @@ import ru.iruchidesu.restaurantvotingsystem.util.MenuUtil;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,7 @@ import java.util.List;
 @Tag(name = "Menu Controller")
 public class MenuController {
 
-    static final String REST_URL = "/rest/restaurant/{restaurantId}/menu";
+    static final String REST_URL = "/rest/restaurants/{restaurantId}/menus";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -35,43 +36,40 @@ public class MenuController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Secured("ROLE_ADMIN")
     @Operation(summary = "Create today's menu (only admin)")
     public ResponseEntity<Menu> create(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("create for restaurant with id {}", restaurantId);
         Menu created = service.create(menuTo, restaurantId);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL)
-                .buildAndExpand(created.getId()).toUri();
+                .buildAndExpand(restaurantId).toUri();
         return ResponseEntity.created(uriOfNewResource).body(created);
     }
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
     @Operation(summary = "Update today's menu (only admin)")
     public void update(@Valid @RequestBody MenuTo menuTo, @PathVariable int restaurantId) {
         log.info("update for restaurant with id {}", restaurantId);
         service.update(menuTo, restaurantId);
     }
 
-    @GetMapping
-    @Operation(summary = "Get today's menu for a restaurant")
-    public MenuTo getTodayMenu(@PathVariable int restaurantId) {
-        log.info("get today for restaurant with id {}", restaurantId);
-        return MenuUtil.asTo(service.getTodayMenu(restaurantId));
+    @GetMapping("/by")
+    @Operation(summary = "Get menu for a restaurant")
+    public MenuTo getMenu(@PathVariable int restaurantId, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date) {
+        log.info("get for restaurant with id {}", restaurantId);
+        return MenuUtil.asTo(service.getMenu(restaurantId, date));
     }
 
-    @GetMapping("/history")
-    @Operation(summary = "Get menu history for a restaurant")
-    public List<Menu> getHistoryMenu(@PathVariable int restaurantId) {
+    @GetMapping
+    @Operation(summary = "Get menus for a restaurant")
+    public List<Menu> getAllMenu(@PathVariable int restaurantId) {
         log.info("get all for restaurant with id {}", restaurantId);
         return service.getHistoryMenu(restaurantId);
     }
 
     @DeleteMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Secured("ROLE_ADMIN")
     @Operation(summary = "Delete today's menu for a restaurant (only admin)")
     public void delete(@PathVariable int restaurantId) {
         log.info("delete today for restaurant with id {}", restaurantId);

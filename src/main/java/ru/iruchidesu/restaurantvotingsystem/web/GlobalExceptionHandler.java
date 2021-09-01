@@ -23,6 +23,7 @@ import ru.iruchidesu.restaurantvotingsystem.error.NotFoundException;
 import ru.iruchidesu.restaurantvotingsystem.error.VoteUpdateTimeException;
 import ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -78,6 +79,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
     public ResponseEntity<?> persistException(WebRequest request, NotFoundException ex) {
         log.error("NotFoundException ", ex);
+        return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), ex.getMessage()),
+                HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ResponseEntity<?> persistException(WebRequest request, EntityNotFoundException ex) {
+        log.error("EntityNotFoundException ", ex);
         return createResponseEntity(getDefaultBody(request, ErrorAttributeOptions.of(MESSAGE), ex.getMessage()),
                 HttpStatus.UNPROCESSABLE_ENTITY);
     }

@@ -1,13 +1,15 @@
 spring:
   jpa:
-    open-in-view: true
+    open-in-view: false
     show-sql: true
     hibernate:
       ddl-auto: none
     properties:
+      #  http://docs.jboss.org/hibernate/orm/5.3/userguide/html_single/Hibernate_User_Guide.html#configurations
       hibernate:
         dialect: org.hibernate.dialect.HSQLDialect
         default_batch_fetch_size: 20
+        # https://stackoverflow.com/questions/21257819/what-is-the-difference-between-hibernate-jdbc-fetch-size-and-hibernate-jdbc-batc
         jdbc.batch_size: 20
         format_sql: true
         use_sql_comments: true

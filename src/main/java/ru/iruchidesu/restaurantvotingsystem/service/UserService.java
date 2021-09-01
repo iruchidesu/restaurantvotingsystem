@@ -66,7 +66,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void enable(int id, boolean enabled) {
         log.info(enabled ? "enable {}" : "disable {}", id);
-        User user = repository.findById(id).orElseThrow(notFoundException("user with id = " + id));
+        User user = repository.getById(id);
         user.setEnabled(enabled);
     }
 

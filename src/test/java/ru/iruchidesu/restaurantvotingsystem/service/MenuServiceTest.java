@@ -83,18 +83,18 @@ public class MenuServiceTest extends AbstractServiceTest {
 
     @Test
     void getTodayMenu() {
-        Menu menu = service.getTodayMenu(RESTAURANT1_ID);
+        Menu menu = service.getMenu(RESTAURANT1_ID, LocalDate.now());
         MATCHER.assertMatch(menu, menuTodayR1);
     }
 
     @Test
     void getNotFoundTodayMenu() {
-        assertThrows(NotFoundException.class, () -> service.getTodayMenu(RESTAURANT2_ID));
+        assertThrows(NotFoundException.class, () -> service.getMenu(RESTAURANT2_ID, LocalDate.now()));
     }
 
     @Test
     void getTodayMenuNotFoundRestaurant() {
-        assertThrows(NotFoundException.class, () -> service.getTodayMenu(RestaurantTestData.NOT_FOUND));
+        assertThrows(NotFoundException.class, () -> service.getMenu(RestaurantTestData.NOT_FOUND, LocalDate.now()));
     }
 
     @Test

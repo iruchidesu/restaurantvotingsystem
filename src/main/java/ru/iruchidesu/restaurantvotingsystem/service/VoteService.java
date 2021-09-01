@@ -15,6 +15,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.notFoundException;
+import static ru.iruchidesu.restaurantvotingsystem.util.ValidationUtil.notFoundRestaurantException;
 
 @Service
 public class VoteService {
@@ -32,24 +33,12 @@ public class VoteService {
 
     @Transactional
     public Vote create(int restaurantId, int userId) {
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundException("restaurant with id = " + restaurantId));
-        User user = userRepository.findById(userId).orElseThrow(notFoundException("user with id = " + userId));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundRestaurantException(restaurantId));
+        User user = userRepository.getById(userId);
         Vote vote = new Vote();
         vote.setRestaurant(restaurant);
         vote.setUser(user);
-        if (!vote.isNew() && vote.getUser().id() != userId) {
-            return null;
-        }
         return voteRepository.save(vote);
-    }
-
-    public void deleteToday(int userId, LocalTime time) {
-        if (time.isAfter(VOTE_UPDATE_TIME)) {
-            throw new VoteUpdateTimeException("it's too late to change your vote");
-        }
-        if (voteRepository.delete(userId, LocalDate.now()) == 0) {
-            notFoundException("vote with userId = " + userId).get();
-        }
     }
 
     public Vote get(int id) {
@@ -61,10 +50,10 @@ public class VoteService {
         if (time.isAfter(VOTE_UPDATE_TIME)) {
             throw new VoteUpdateTimeException("it's too late to change your vote");
         }
-        Vote vote = getTodayVoteByUser(userId);
-        User user = userRepository.findById(userId).orElse(null);
+        Vote vote = getVoteByUser(userId, LocalDate.now());
+        User user = userRepository.getById(userId);
         vote.setUser(user);
-        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundException("restaurant with id = " + restaurantId));
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(notFoundRestaurantException(restaurantId));
         vote.setRestaurant(restaurant);
     }
 
@@ -72,8 +61,8 @@ public class VoteService {
         return voteRepository.getVoteByUserIdOrderByVotingDateDesc(userId);
     }
 
-    public Vote getTodayVoteByUser(int userId) {
-        return voteRepository.getVoteByUserIdAndVotingDate(userId, LocalDate.now())
+    public Vote getVoteByUser(int userId, LocalDate date) {
+        return voteRepository.getVoteByUserIdAndVotingDate(userId, date)
                 .orElseThrow(notFoundException("vote with userId = " + userId));
     }
 }
